@@ -29,3 +29,10 @@ body {
     border-radius: 5px;
     border: 1px dotted  #999;
 }
+
+.primary {
+
+    background-color: blueviolet;
+    font-size: 2em;
+    color: wheat;
+}

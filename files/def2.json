@@ -1,5 +1,4 @@
 {
-
       "def" : {
           "title": "Form1",
           "remoteSubmit" : true,
@@ -57,7 +56,8 @@
                               {
                                   "name": "when",
                                   "type": "text",
-                                  "label": "When"
+                                  "label": "When",
+                                  "default": "never"
                               }
 
                           ]
@@ -71,7 +71,11 @@
           "last_name": "Harleev",
           "stuff": {
               "name": "Pope",
-              "color": "purple"
+              "color": "purple",
+              "backup": {
+                  "when": "tomorrow",
+                  "where": "there"
+              }
           }
-      }
+    }
 }

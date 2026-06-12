@@ -1,6 +1,8 @@
-use leptos::{attr::{r#async, list}, form, html::div, leptos_dom::logging::console_log, prelude::*, svg::view};
+use std::{collections::HashMap, default};
+
+use leptos::{attr::{r#async, list}, ev, form, html::div, leptos_dom::logging::console_log, prelude::*, svg::view};
 use serde::Deserialize;
-use serde_json::Value;
+use serde_json::{Value, json};
 use wasm_bindgen::JsCast;
 use gloo_net::http::Request;
 
@@ -147,6 +149,7 @@ fn App() -> impl  IntoView {
 fn AForm(form: FormA) -> impl IntoView {
     let (data, set_data) = signal(form.data);
     let memo = Memo::new( move | _ | data.get());
+    provide_context(set_data);
     view! {
         <div class="form-wrap">
             {
@@ -169,12 +172,8 @@ fn AForm(form: FormA) -> impl IntoView {
                     }).collect_view()
                 }
             </div>
-
-            <button
-                on:click= move |_| update_data(set_data, "stuff--name".into(), "ASD!!".into())
-            >
-                CLICK ME
-            </button>
+            // <Jachc/>
+            <Pretty data/>
 
         </div>
     }
@@ -182,14 +181,81 @@ fn AForm(form: FormA) -> impl IntoView {
 
 // ---
 
-fn update_data(w: WriteSignal<Value>, path: String, value: Value) {
+// fn update_data(path: String, value: Value) {
+//     let w = use_context::<WriteSignal<Value>>().unwrap();
+//     w.update(| p |  {
+//         let mut f = p;
+//         for pe in path.split("--").skip(1) {
+//             f = f.get_mut(pe).unwrap();
+//         }
+//         *f = value
+//     })
+// }
+
+
+// fn update_data(path: String, value: Value) {
+//     let w = use_context::<WriteSignal<Value>>().unwrap();
+//     console_log(path.as_str());
+//     w.update(| p |  {
+//         let mut f = p;
+//         for pe in path.split("--").skip(1) {
+//             if f.is_object() {
+//                 f = f.as_object_mut().unwrap().entry(pe).or_insert(Value::Null);
+//             }
+//         }
+//         *f = value
+//     })
+// }
+
+
+fn update_data(path: String, value: Value) {
+    let w = use_context::<WriteSignal<Value>>().unwrap();
+    console_log(path.as_str());
+    let path_arr = path.split("--").skip(1).collect::<Vec<_>>();
     w.update(| p |  {
         let mut f = p;
-        for pe in path.split("--") {
-            f = f.get_mut(pe).unwrap();
+        for (idx, pe) in path_arr.iter().enumerate() {
+            if f.is_object() {
+                f = f.as_object_mut().unwrap().entry(*pe).or_insert(
+                    if idx < path_arr.len() -1 {
+                        json!({})
+                    } else {
+                        json!(())
+                    }
+                );
+            }
         }
         *f = value
     })
+}
+
+
+// ---
+
+#[component]
+fn Pretty (data: ReadSignal<Value>) -> impl IntoView {
+    view! {
+        <div style="margin: 10px">
+            { move || data.with(| d |  serde_json::to_string_pretty(d).unwrap_or_default()) }
+        </div>
+    }
+}
+
+// ---
+
+#[component]
+fn Jachc () -> impl IntoView {
+
+    // let set_data = use_context::<WriteSignal<Value>>().unwrap();
+
+    view! {
+        <button
+            class="primary"
+            on:click= move |_| update_data("form--stuff--name".into(), "ASD!!".into())
+        >
+            CLICK ME
+        </button>
+    }
 }
 
 // ---
@@ -203,7 +269,7 @@ fn Fields(fields: Vec<FieldA>, path: String, data:Memo<Value>) -> impl IntoView 
                 let path = format!("{}--{}", path, name);
                 let fd = Memo::new( move |_| data.get()[name.clone()].clone() );
                 view! {
-                    <Field field = f path=path data = fd/>
+                    <Field field = f path data = fd/>
                 }
             }).collect_view()
         }
@@ -212,28 +278,29 @@ fn Fields(fields: Vec<FieldA>, path: String, data:Memo<Value>) -> impl IntoView 
 
 #[component]
 fn Field(field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
-
     view! {
-
+            <div>
         {
+
             match &field.specific {
                 SpecificFields::Text => view! {
                     <FText field = field.clone() path data />
                 }.into_any(),
                 SpecificFields::Group(s) => view! {
-                    <FGroup field=field.clone() specific=s.clone() path  data/>
+                    <FGroup field=field.clone() specific=s.clone() path data/>
                 }.into_any(),
 
                 SpecificFields::Select(s) => view! {
-                    <FSelect field=field.clone() specific=s.clone() path=path />
+                    <FSelect field=field.clone() specific=s.clone() path data/>
                 }.into_any(),
 
                 _ => view! {
                     <div>Not implemented yet</div>
                 }.into_any()
             }
-        }
 
+        }
+            </div>
     }
 }
 
@@ -241,33 +308,41 @@ fn Field(field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
 #[component]
 fn FText(field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
     let id = format!("_{}",path);
-    // console_log(format!("{}", data).as_str());
-
     let clean_val = move || data.get().as_str().unwrap_or("").to_string();
     view! {
         <div class={format!("field-container {}", field.classes.join(" "))}>
             <label for={id.clone()}>{field.label}</label>
-            // <input id={id} name={field.name} type="text"  value={field.default}/>
-            <input id={id} name={field.name} type="text" value=clean_val/>
+            <input
+                id={id}
+                // name={field.name}
+                type="text"
+                value=clean_val
+                on:input=move |evt| update_data(path.clone().into(), event_target_value(&evt).into())
+            />
         </div>
     }
-
-
 }
 
-
-
+// ---
 
 #[component]
-fn FSelect(field: FieldA, specific: ChoiceLike, path: String) -> impl IntoView {
+fn FSelect(field: FieldA, specific: ChoiceLike, path: String, data: Memo<Value>) -> impl IntoView {
     let id = format!("_{}",path);
+    let val = move || data.get().as_str().unwrap_or("").to_string();
     view! {
         <div class={format!("field-container {}", field.classes.join(" "))}>
             <label for={id.clone()}>{field.label}</label>
-            <select id={id} name={field.name}>
+            <select
+                id={id}
+                // name={field.name}
+                prop:value={val}
+                on:change = move |evt|  update_data(path.clone().into(), event_target_value(&evt).into())
+            >
                 {
                     specific.options.into_iter().map(| o | view! {
-                        <option value={o.value}>{o.label}</option>
+                        <option value={o.value} >
+                            {o.label}
+                        </option>
                     }).collect_view()
                 }
             </select>
@@ -275,13 +350,16 @@ fn FSelect(field: FieldA, specific: ChoiceLike, path: String) -> impl IntoView {
     }
 }
 
+// ---
+
 #[component]
 fn FGroup(field: FieldA, specific: ContainerLike, path: String, data: Memo<Value>) -> impl IntoView {
-    let path  = format!("{}--{}",path, field.name);
     view! {
         <div class={format!("group {}", field.classes.join(" "))}>
             <label for={path.clone()}>{field.label}</label>
-            <Fields fields= specific.fields path=path data/>
+            <Fields fields= specific.fields path data/>
         </div>
     }
 }
+
+// ---
