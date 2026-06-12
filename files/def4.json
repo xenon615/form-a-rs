@@ -1,0 +1,35 @@
+{
+
+      "def" : {
+          "title": "Form1",
+          "remoteSubmit" : true,
+          "buttons" : [
+              {
+                  "text" : "Save",
+                  "classes" : ["button", "button-primary","button-large"],
+                  "type" : "submit"
+              }
+          ],
+          "fields" : [
+              {
+                  "type" : "text",
+                  "name" : "first_name",
+                  "label" : "First Name",
+                  "classes": ["is-cell", "cell-6"],
+                  "default": "Raymond"
+              },
+              {
+                  "type" : "text",
+                  "name" : "last_name",
+                  "label" : "Last Name",
+                  "classes": ["is-cell", "cell-6"],
+                  "default": "Raymond"
+              }
+
+          ]
+      },
+      "data" : {
+          "first_name": "Ugonyalo",
+          "last_name": "Reactov"
+      }
+}
