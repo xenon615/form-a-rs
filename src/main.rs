@@ -1,6 +1,4 @@
-use std::{collections::HashMap, default};
-
-use leptos::{attr::{r#async, list}, ev, form, html::div, leptos_dom::logging::console_log, prelude::*, svg::view};
+use leptos::{leptos_dom::logging::console_log, prelude::*, svg::view};
 use serde::Deserialize;
 use serde_json::{Value, json};
 use wasm_bindgen::JsCast;
@@ -38,47 +36,11 @@ struct Button {
     btype: String
 }
 
-// #[derive(Deserialize, Clone, Debug)]
-// struct TextLike {
-//     #[serde(flatten)]
-//     common: CommonProps
-// }
-
-// #[derive(Deserialize, Clone, Debug)]
-// struct ContainerLike {
-//     fields: Vec<FieldA>,
-//     #[serde(flatten)]
-//     common: CommonProps
-// }
-
 #[derive(Deserialize, Clone, Debug)]
 struct Opt {
     value: String,
     label: String
 }
-
-// #[derive(Deserialize, Clone, Debug)]
-// struct ChoiceLike {
-//     options: Vec<Opt>,
-//     #[serde(flatten)]
-//     common: CommonProps
-// }
-
-
-// #[derive(Deserialize, Clone, Debug)]
-// #[serde(tag = "type")]
-// enum FieldA {
-//     #[serde(rename = "text")]
-//     Text(TextLike),
-
-//     #[serde(rename = "group")]
-//     Group(ContainerLike),
-
-//     #[serde(rename = "select")]
-//     Select(ChoiceLike)
-// }
-
-
 
 #[derive(Deserialize, Clone, Debug)]
 struct ChoiceLike {
@@ -89,7 +51,6 @@ struct ChoiceLike {
 struct ContainerLike {
     fields: Vec<FieldA>,
 }
-
 
 #[derive(Deserialize, Clone, Debug)]
 #[serde(tag = "type")]
@@ -181,33 +142,6 @@ fn AForm(form: FormA) -> impl IntoView {
 
 // ---
 
-// fn update_data(path: String, value: Value) {
-//     let w = use_context::<WriteSignal<Value>>().unwrap();
-//     w.update(| p |  {
-//         let mut f = p;
-//         for pe in path.split("--").skip(1) {
-//             f = f.get_mut(pe).unwrap();
-//         }
-//         *f = value
-//     })
-// }
-
-
-// fn update_data(path: String, value: Value) {
-//     let w = use_context::<WriteSignal<Value>>().unwrap();
-//     console_log(path.as_str());
-//     w.update(| p |  {
-//         let mut f = p;
-//         for pe in path.split("--").skip(1) {
-//             if f.is_object() {
-//                 f = f.as_object_mut().unwrap().entry(pe).or_insert(Value::Null);
-//             }
-//         }
-//         *f = value
-//     })
-// }
-
-
 fn update_data(path: String, value: Value) {
     let w = use_context::<WriteSignal<Value>>().unwrap();
     console_log(path.as_str());
@@ -246,8 +180,6 @@ fn Pretty (data: ReadSignal<Value>) -> impl IntoView {
 #[component]
 fn Jachc () -> impl IntoView {
 
-    // let set_data = use_context::<WriteSignal<Value>>().unwrap();
-
     view! {
         <button
             class="primary"
@@ -262,22 +194,21 @@ fn Jachc () -> impl IntoView {
 
 #[component]
 fn Fields(fields: Vec<FieldA>, path: String, data:Memo<Value>) -> impl IntoView {
-    view! {
-        {
-            fields.into_iter().map(| f | {
-                let name = f.name.clone();
-                let path = format!("{}--{}", path, name);
-                let fd = Memo::new( move |_| data.get()[name.clone()].clone() );
-                view! {
-                    <Field field = f path data = fd/>
-                }
-            }).collect_view()
+    fields.into_iter().map(| f | {
+        let name = f.name.clone();
+        let path = format!("{}--{}", path, name);
+        let fd = Memo::new( move |_| data.get()[name.clone()].clone() );
+        view! {
+            <Field field = f path data = fd/>
         }
-    }
+    }).collect_view()
 }
+
+// ---
 
 #[component]
 fn Field(field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
+
     view! {
             <div>
         {
@@ -314,7 +245,6 @@ fn FText(field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
             <label for={id.clone()}>{field.label}</label>
             <input
                 id={id}
-                // name={field.name}
                 type="text"
                 value=clean_val
                 on:input=move |evt| update_data(path.clone().into(), event_target_value(&evt).into())
@@ -334,7 +264,6 @@ fn FSelect(field: FieldA, specific: ChoiceLike, path: String, data: Memo<Value>)
             <label for={id.clone()}>{field.label}</label>
             <select
                 id={id}
-                // name={field.name}
                 prop:value={val}
                 on:change = move |evt|  update_data(path.clone().into(), event_target_value(&evt).into())
             >
