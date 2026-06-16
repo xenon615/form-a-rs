@@ -4,7 +4,9 @@ use serde_json::{Value, json};
 use wasm_bindgen::JsCast;
 use gloo_net::http::Request;
 
+
 fn main() {
+    console_error_panic_hook::set_once();
     mount_to(
         document().get_element_by_id("app").unwrap().unchecked_into(),
         App
@@ -144,7 +146,6 @@ fn AForm(form: FormA) -> impl IntoView {
 
 fn update_data(path: String, value: Value) {
     let w = use_context::<WriteSignal<Value>>().unwrap();
-    console_log(path.as_str());
     let path_arr = path.split("--").skip(1).collect::<Vec<_>>();
     w.update(| p |  {
         let mut f = p;
@@ -192,17 +193,57 @@ fn Jachc () -> impl IntoView {
 
 // ---
 
+// #[component]
+// fn Fields(fields: Vec<FieldA>, path: String, data:Memo<Value>) -> impl IntoView {
+//     fields.into_iter().map(| f | {
+//         let name = f.name.clone();
+//         let path = format!("{}--{}", path, name);
+//         let fd = Memo::new( move |_| data.get()[name.clone()].clone() );
+//         view! {
+//             <Field field = f path data = fd/>
+//         }
+//     }).collect_view()
+// }
 #[component]
-fn Fields(fields: Vec<FieldA>, path: String, data:Memo<Value>) -> impl IntoView {
-    fields.into_iter().map(| f | {
-        let name = f.name.clone();
-        let path = format!("{}--{}", path, name);
-        let fd = Memo::new( move |_| data.get()[name.clone()].clone() );
-        view! {
-            <Field field = f path data = fd/>
-        }
-    }).collect_view()
+fn Fields(fields: Vec<FieldA>, path: String, data: Memo<Value>) -> impl IntoView {
+    view! {
+        <For
+            each = move || fields.clone()
+            key = move | f | f.name.clone()
+            let(field)
+        >
+            {
+                let name = field.name.clone();
+                let default = field.default.clone();
+                let path = format!("{}--{}", path, name);
+                let path2 = path.clone();   //??????
+                let fd = Memo::new(
+                    move |_|  {
+                        data.with(|d| {
+                            // console_log(&name);
+                                match d.get(name.clone()) {
+                                    Some(v) => v.clone(),
+                                    None => {
+                                        if !default.is_null() {
+                                            update_data(path2.clone(), default.clone());
+                                        }
+                                        Value::Null
+                                    }
+                                }
+                            }
+                        )
+                    }
+                );
+                // console_log(&format!("{:?}", fd.get()));
+
+               view! {
+                   <Field field path  data=fd/>
+               }
+            }
+        </For>
+    }
 }
+
 
 // ---
 
