@@ -1,81 +1,91 @@
 {
-      "def" : {
-          "title": "Form1",
-          "remoteSubmit" : true,
-          "buttons" : [
-              {
-                  "text" : "Save",
-                  "classes" : ["button", "button-primary","button-large"],
-                  "type" : "submit"
-              }
-          ],
-          "fields" : [
-              {
-                  "type" : "text",
-                  "name" : "first_name",
-                  "label" : "First Name",
-                  "classes": ["is-cell", "cell-6"],
-                  "default": "Raymond"
-              },
-              {
-                  "type" : "text",
-                  "name" : "last_name",
-                  "label" : "Last Name"
-              },
+    "def" : {
+        "title": "Form1",
+        "remoteSubmit" : true,
+        "buttons" : [
+            {
+                "text" : "Save",
+                "classes" : ["button", "button-primary","button-large"],
+                "type" : "submit"
+            }
+        ],
+        "fields" : [
+            {
+                "type" : "text",
+                "name" : "first_name",
+                "label" : "First Name",
+                "classes": ["is-cell", "cell-6"],
+                "default": "Raymond",
+                "cLogic": [
+                    {
+                        "path": "smtp--SMTPAuth",
+                        "value": true,
+                        "compare": "==",
+                        "relation": "or"
+                    }
+                ]
 
-              {
-                  "type" : "group",
-                  "name" : "stuff",
-                  "label" : "Stuff",
-                  "fields": [
-                      {
-                          "name": "name",
-                          "type": "text",
-                          "label": "Name"
-                      },
-                      {
-                          "name": "color",
-                          "type": "text",
-                          "label": "Color",
-                          "default": "marengo"
-                      },
+            },
+            {
+                "type" : "text",
+                "name" : "last_name",
+                "label" : "Last Name"
+            },
 
-                      {
-                          "name": "backup",
-                          "type": "group",
-                          "label": "Backup",
-                          "fields": [
-                              {
-                                  "name": "where",
-                                  "type": "select",
-                                  "label": "Where",
-                                  "options": [
-                                      {"value": "here", "label": "Here"},
-                                      {"value": "there", "label": "There"}
-                                  ]
-                              },
-                              {
-                                  "name": "when",
-                                  "type": "text",
-                                  "label": "When",
-                                  "default": "never"
-                              }
+            {
+                "type" : "group",
+                "name" : "stuff",
+                "label" : "Stuff",
+                "fields": [
+                    {
+                        "name": "name",
+                        "type": "text",
+                        "label": "Name"
+                    },
+                    {
+                        "name": "color",
+                        "type": "text",
+                        "label": "Color",
+                        "default": "marengo"
+                    },
 
-                          ]
-                      }
-                  ]
-              }
-          ]
-      },
-      "data" : {
-          "first_name": "Ugon",
-          "last_name": "Harleev",
-          "stuff": {
-              "name": "Pope",
-              "backup": {
-                  "when": "tomorrow",
-                  "where": "there"
-              }
-          }
+                    {
+                        "name": "backup",
+                        "type": "group",
+                        "label": "Backup",
+                        "fields": [
+                            {
+                                "name": "where",
+                                "type": "select",
+                                "label": "Where",
+                                "options": [
+                                    {"value": "here", "label": "Here"},
+                                    {"value": "there", "label": "There"}
+                                ]
+                            },
+                            {
+                                "name": "when",
+                                "type": "text",
+                                "label": "When",
+                                "default": "never"
+                            }
+
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "data" : {
+        "first_name": "Ugon",
+        "last_name": "Harleev",
+        "stuff": {
+            "name": "Pope",
+            "color": "red",
+            "backup": {
+                "when": "tomorrow",
+                "where": "there"
+            }
+        }
     }
 }

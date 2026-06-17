@@ -65,6 +65,35 @@ enum SpecificFields {
     Group(ContainerLike)
 }
 
+#[derive(Deserialize, Debug, Clone)]
+enum Relation {
+    #[serde(rename = "or")]
+    Or,
+    #[serde(rename = "and")]
+    And
+}
+
+#[derive(Deserialize, Debug, Clone)]
+enum Compare {
+    #[serde(rename = "==")]
+    Eq,
+    #[serde(rename = "!=")]
+    MotEq,
+    #[serde(rename = ">")]
+    More,
+    #[serde(rename = "<")]
+    Less
+}
+
+#[derive(Deserialize, Debug, Clone)]
+struct Logic {
+    path: String,
+    value: Value,
+    // compare: String,
+    compare: Compare,
+    relation: Relation
+}
+
 #[derive(Deserialize, Clone, Debug)]
 struct FieldA {
         name: String,
@@ -74,6 +103,9 @@ struct FieldA {
         classes: Vec<String>,
         #[serde(default)]
         default: Value,
+        #[serde(rename = "cLogic")]
+        #[serde(default)]
+        c_logic: Vec<Logic>,
         #[serde(flatten)]
         specific: SpecificFields
 }
@@ -208,7 +240,10 @@ fn Jachc () -> impl IntoView {
 fn Fields(fields: Vec<FieldA>, path: String, data: Memo<Value>) -> impl IntoView {
     view! {
         <For
-            each = move || fields.clone()
+            // each = move || fields.clone()
+            each = move || {
+                fields.clone().into_iter().filter(|f| f.name != "first_name".to_string()).collect::<Vec<_>>()
+            }
             key = move | f | f.name.clone()
             let(field)
         >
