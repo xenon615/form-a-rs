@@ -18,8 +18,8 @@
                 "default": "Raymond",
                 "cLogic": [
                     {
-                        "path": "smtp--SMTPAuth",
-                        "value": true,
+                        "path": "stuff--backup--where",
+                        "value": "here",
                         "compare": "==",
                         "relation": "or"
                     }
@@ -77,7 +77,6 @@
         ]
     },
     "data" : {
-        "first_name": "Ugon",
         "last_name": "Harleev",
         "stuff": {
             "name": "Pope",

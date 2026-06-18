@@ -145,6 +145,7 @@ fn AForm(form: FormA) -> impl IntoView {
     let (data, set_data) = signal(form.data);
     let memo = Memo::new( move | _ | data.get());
     provide_context(set_data);
+    provide_context(data);
     view! {
         <div class="form-wrap">
             {
@@ -196,6 +197,24 @@ fn update_data(path: String, value: Value) {
     })
 }
 
+// ---
+
+fn get_data(path: String) -> Value{
+    let r = use_context::<ReadSignal<Value>>().unwrap();
+    let path_arr = path.split("--").collect::<Vec<_>>();
+    let mut p = r.get();
+    for (idx, pe) in path_arr.iter().enumerate() {
+        if p.is_null() {
+           return p;
+        }
+        if p.is_object() {
+            p = p[pe].clone()
+        } else {
+            return p;
+        }
+    }
+    p
+}
 
 // ---
 
@@ -236,13 +255,39 @@ fn Jachc () -> impl IntoView {
 //         }
 //     }).collect_view()
 // }
+
+// ---
+
+fn is_show(field: &FieldA) -> bool {
+
+    if field.c_logic.is_empty() {
+        return true;
+    }
+    let mut result = false;
+    for l in &field.c_logic {
+        let t = get_data(l.path.clone());
+        let l0 = match l.compare {
+            Compare::Eq => l.value == t,
+            Compare::MotEq => l.value != t,
+            _ => true
+        };
+        result = match l.relation {
+            Relation::And => l0 && result,
+            Relation::Or => l0 || result
+        }
+    }
+    result
+}
+
+// ---
+
 #[component]
 fn Fields(fields: Vec<FieldA>, path: String, data: Memo<Value>) -> impl IntoView {
     view! {
         <For
             // each = move || fields.clone()
             each = move || {
-                fields.clone().into_iter().filter(|f| f.name != "first_name".to_string()).collect::<Vec<_>>()
+                fields.clone().into_iter().filter(|f| is_show(&f)).collect::<Vec<_>>()
             }
             key = move | f | f.name.clone()
             let(field)
