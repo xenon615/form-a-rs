@@ -110,6 +110,15 @@ struct FieldA {
         specific: SpecificFields
 }
 
+impl FieldA {
+    fn empty_value(&self) -> Value {
+        match self.specific {
+            SpecificFields::Group(_) => json!({}),
+            _ => json!(())
+        }
+    }
+}
+
 // ---
 
 async fn get_form() -> Result<FormA, Error> {
@@ -146,6 +155,7 @@ fn AForm(form: FormA) -> impl IntoView {
     let memo = Memo::new( move | _ | data.get());
     provide_context(set_data);
     provide_context(data);
+    provide_context(form.def.fields.clone());
     view! {
         <div class="form-wrap">
             {
@@ -168,7 +178,7 @@ fn AForm(form: FormA) -> impl IntoView {
                     }).collect_view()
                 }
             </div>
-            // <Jachc/>
+            <Jachc/>
             <Pretty data/>
 
         </div>
@@ -185,11 +195,13 @@ fn update_data(path: String, value: Value) {
         for (idx, pe) in path_arr.iter().enumerate() {
             if f.is_object() {
                 f = f.as_object_mut().unwrap().entry(*pe).or_insert(
-                    if idx < path_arr.len() -1 {
-                        json!({})
-                    } else {
-                        json!(())
-                    }
+                    get_field(&path_arr[0 .. idx + 1]).empty_value()
+
+                    // if idx < path_arr.len() -1 {
+                    //     json!({})
+                    // } else {
+                    //     json!(())
+                    // }
                 );
             }
         }
@@ -199,11 +211,48 @@ fn update_data(path: String, value: Value) {
 
 // ---
 
+
+// fn get_field(path: &Vec<String>) -> FieldA {
+//     let r = use_context::<Vec<FieldA>>().unwrap();
+
+//     let mut p = r;
+//     let mut idx = 0;
+//     loop {
+//         let f = p.into_iter().find(| e| e.name == path[idx]).unwrap();
+//         match f.specific  {
+//             SpecificFields::Group(sf) if idx < path.len() - 1  => p = sf.fields,
+//             _ => {break f}
+//         }
+//         idx += 1;
+//     }
+
+// }
+
+fn get_field(path: &[&str]) -> FieldA {
+    let r = use_context::<Vec<FieldA>>().unwrap();
+    console_log(&format!("{:?}", path.join("-")));
+
+    let mut p = r;
+    let mut idx = 0;
+    loop {
+        let f = p.into_iter().find(| e| e.name == path[idx]).unwrap();
+        match f.specific  {
+            SpecificFields::Group(sf) if idx < path.len() - 1  => p = sf.fields,
+            _ => {break f}
+        }
+        idx += 1;
+    }
+
+}
+
+
+// ---
+
 fn get_data(path: String) -> Value{
     let r = use_context::<ReadSignal<Value>>().unwrap();
     let path_arr = path.split("--").collect::<Vec<_>>();
     let mut p = r.get();
-    for (idx, pe) in path_arr.iter().enumerate() {
+    for pe in path_arr.iter() {
         if p.is_null() {
            return p;
         }
@@ -235,7 +284,18 @@ fn Jachc () -> impl IntoView {
     view! {
         <button
             class="primary"
-            on:click= move |_| update_data("form--stuff--name".into(), "ASD!!".into())
+            // on:click= move |_| update_data("form--stuff--name".into(), "ASD!!".into())
+            on:click = move |_| {
+                let path = vec!["stuff","backup","where"];
+                let f = get_field(&path[0..1]);
+                // let f = get_field(vec![
+                //     "stuff".to_string(),
+                //     "backup".to_string(),
+                //     // "where".to_string()
+                // ]);
+
+                console_log(&format!("{:?}", f.empty_value()));
+            }
         >
             CLICK ME
         </button>
@@ -259,16 +319,15 @@ fn Jachc () -> impl IntoView {
 // ---
 
 fn is_show(field: &FieldA) -> bool {
-
     if field.c_logic.is_empty() {
         return true;
     }
     let mut result = false;
     for l in &field.c_logic {
-        let t = get_data(l.path.clone());
+        let test = get_data(l.path.clone());
         let l0 = match l.compare {
-            Compare::Eq => l.value == t,
-            Compare::MotEq => l.value != t,
+            Compare::Eq => l.value == test,
+            Compare::MotEq => l.value != test,
             _ => true
         };
         result = match l.relation {
@@ -295,6 +354,7 @@ fn Fields(fields: Vec<FieldA>, path: String, data: Memo<Value>) -> impl IntoView
             {
                 let name = field.name.clone();
                 let default = field.default.clone();
+
                 let path = format!("{}--{}", path, name);
                 let path2 = path.clone();   //??????
                 let fd = Memo::new(

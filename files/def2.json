@@ -66,8 +66,8 @@
                             {
                                 "name": "when",
                                 "type": "text",
-                                "label": "When",
-                                "default": "never"
+                                "label": "When"
+
                             }
 
                         ]
@@ -80,11 +80,7 @@
         "last_name": "Harleev",
         "stuff": {
             "name": "Pope",
-            "color": "red",
-            "backup": {
-                "when": "tomorrow",
-                "where": "there"
-            }
+            "color": "red"
         }
     }
 }
