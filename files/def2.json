@@ -61,15 +61,15 @@
                                 "options": [
                                     {"value": "here", "label": "Here"},
                                     {"value": "there", "label": "There"}
-                                ]
+                                ],
+                                "default": "here"
+
                             },
                             {
                                 "name": "when",
                                 "type": "text",
                                 "label": "When"
-
                             }
-
                         ]
                     }
                 ]

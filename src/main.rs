@@ -196,12 +196,6 @@ fn update_data(path: String, value: Value) {
             if f.is_object() {
                 f = f.as_object_mut().unwrap().entry(*pe).or_insert(
                     get_field(&path_arr[0 .. idx + 1]).empty_value()
-
-                    // if idx < path_arr.len() -1 {
-                    //     json!({})
-                    // } else {
-                    //     json!(())
-                    // }
                 );
             }
         }
@@ -210,23 +204,6 @@ fn update_data(path: String, value: Value) {
 }
 
 // ---
-
-
-// fn get_field(path: &Vec<String>) -> FieldA {
-//     let r = use_context::<Vec<FieldA>>().unwrap();
-
-//     let mut p = r;
-//     let mut idx = 0;
-//     loop {
-//         let f = p.into_iter().find(| e| e.name == path[idx]).unwrap();
-//         match f.specific  {
-//             SpecificFields::Group(sf) if idx < path.len() - 1  => p = sf.fields,
-//             _ => {break f}
-//         }
-//         idx += 1;
-//     }
-
-// }
 
 fn get_field(path: &[&str]) -> FieldA {
     let r = use_context::<Vec<FieldA>>().unwrap();
@@ -242,9 +219,7 @@ fn get_field(path: &[&str]) -> FieldA {
         }
         idx += 1;
     }
-
 }
-
 
 // ---
 
