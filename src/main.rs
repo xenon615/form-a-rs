@@ -1,5 +1,3 @@
-use std::{collections::HashMap, iter::Map};
-
 use leptos::{leptos_dom::logging::console_log, prelude::*};
 use serde::Deserialize;
 use serde_json::{Value, json};
@@ -28,6 +26,8 @@ struct FormDef {
     #[serde(default)]
     title: String,
     #[serde(rename = "remoteSubmit")]
+
+    #[allow(dead_code)]
     remote_submit: bool,
     fields: Vec<FieldA>,
     buttons: Vec<Button>
