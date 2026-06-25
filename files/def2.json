@@ -6,8 +6,15 @@
             {
                 "text" : "Save",
                 "classes" : ["button", "button-primary","button-large"],
-                "type" : "submit"
+                "type" : "submit",
+                "action": "submit"
+            },
+            {
+                "text" : "Cancel",
+                "classes" : ["button", "button-primary","button-large"],
+                "type" : "button"
             }
+
         ],
         "fields" : [
             {
@@ -61,9 +68,7 @@
                                 "options": [
                                     {"value": "here", "label": "Here"},
                                     {"value": "there", "label": "There"}
-                                ],
-                                "default": "here"
-
+                                ]
                             },
                             {
                                 "name": "when",
@@ -77,10 +82,14 @@
         ]
     },
     "data" : {
+        "first_name": "Ugon",
         "last_name": "Harleev",
         "stuff": {
             "name": "Pope",
-            "color": "red"
+            "color": "red",
+            "backup" : {
+                "where": "here"
+            }
         }
     }
 }

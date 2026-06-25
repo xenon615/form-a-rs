@@ -1,9 +1,10 @@
-use leptos::{leptos_dom::logging::console_log, prelude::*, svg::view};
+use std::{collections::HashMap, iter::Map};
+
+use leptos::{leptos_dom::logging::console_log, prelude::*};
 use serde::Deserialize;
 use serde_json::{Value, json};
 use wasm_bindgen::JsCast;
 use gloo_net::http::Request;
-
 
 fn main() {
     console_error_panic_hook::set_once();
@@ -35,7 +36,9 @@ struct Button {
     text: String,
     classes: Vec<String>,
     #[serde(rename = "type")]
-    btype: String
+    btype: String,
+    #[serde(default)]
+    action: String
 }
 
 #[derive(Deserialize, Clone, Debug)]
@@ -168,13 +171,19 @@ fn AForm(form: FormA) -> impl IntoView {
                 }
             }
             <div class="fields-wrap">
-                <Fields fields = form.def.fields path="form".to_string() data=memo/>
+                <Fields fields = form.def.fields path="".to_string() data=memo/>
             </div>
 
             <div class="buttons">
                 {
                     form.def.buttons.into_iter().map(| b | view! {
-                        <button type = {b.btype} class = {b.classes.join(" ")}  >{b.text}</button>
+                        <button
+                            type = {b.btype}
+                            class = {b.classes.join(" ")}
+                            on:click = move |_| submit(b.action.as_str())
+                        >
+                            {b.text}
+                        </button>
                     }).collect_view()
                 }
             </div>
@@ -187,15 +196,24 @@ fn AForm(form: FormA) -> impl IntoView {
 
 // ---
 
+fn submit(action:&str) {
+    update_data("__action".to_string(), action.into());
+    console_log(action);
+}
+
+// ---
+
 fn update_data(path: String, value: Value) {
     let w = use_context::<WriteSignal<Value>>().unwrap();
-    let path_arr = path.split("--").skip(1).collect::<Vec<_>>();
+    let path_arr = path.split("--").collect::<Vec<_>>();
     w.update(| p |  {
         let mut f = p;
         for (idx, pe) in path_arr.iter().enumerate() {
             if f.is_object() {
                 f = f.as_object_mut().unwrap().entry(*pe).or_insert(
-                    get_field(&path_arr[0 .. idx + 1]).empty_value()
+                    if idx == 0 {Value::Null} else {
+                        get_field(&path_arr[0 .. idx + 1]).empty_value()
+                    }
                 );
             }
         }
@@ -203,12 +221,28 @@ fn update_data(path: String, value: Value) {
     })
 }
 
+
+fn delete_data(path: &[&str]) {
+    console_log(&format!("{:?}", path));
+    let w = use_context::<WriteSignal<Value>>().unwrap();
+    let path_len = path.len();
+    w.update (| p |  {
+        let mut f = p;
+        for (idx, pe) in path.iter().enumerate() {
+            if path_len == idx + 1 {
+                f.as_object_mut().unwrap().retain(|k, _v| k != pe);
+                break;
+            }
+            f = f.get_mut(pe).unwrap();
+        }
+    })
+}
+
 // ---
 
 fn get_field(path: &[&str]) -> FieldA {
     let r = use_context::<Vec<FieldA>>().unwrap();
-    console_log(&format!("{:?}", path.join("-")));
-
+    // console_log(&format!("{:?}", path.join("-")));
     let mut p = r;
     let mut idx = 0;
     loop {
@@ -259,18 +293,19 @@ fn Jachc () -> impl IntoView {
     view! {
         <button
             class="primary"
-            // on:click= move |_| update_data("form--stuff--name".into(), "ASD!!".into())
+            // on:click= move |_| update_data("first_name".into(), "ASD!!".into())
+            // on:click = move |_| {
+            //     let path = vec!["stuff","backup","where"];
+            //     let f = get_field(&path[0..1]);
+            //     console_log(&format!("{:?}", f.empty_value()));
+            // }
+
             on:click = move |_| {
                 let path = vec!["stuff","backup","where"];
-                let f = get_field(&path[0..1]);
-                // let f = get_field(vec![
-                //     "stuff".to_string(),
-                //     "backup".to_string(),
-                //     // "where".to_string()
-                // ]);
-
-                console_log(&format!("{:?}", f.empty_value()));
+                delete_data(&path[0..2]);
             }
+
+
         >
             CLICK ME
         </button>
@@ -319,7 +354,6 @@ fn is_show(field: &FieldA) -> bool {
 fn Fields(fields: Vec<FieldA>, path: String, data: Memo<Value>) -> impl IntoView {
     view! {
         <For
-            // each = move || fields.clone()
             each = move || {
                 fields.clone().into_iter().filter(|f| is_show(&f)).collect::<Vec<_>>()
             }
@@ -330,7 +364,8 @@ fn Fields(fields: Vec<FieldA>, path: String, data: Memo<Value>) -> impl IntoView
                 let name = field.name.clone();
                 let default = field.default.clone();
 
-                let path = format!("{}--{}", path, name);
+                let path = if path.is_empty() {name.clone()} else {format!("{}--{}", path, name)};
+
                 let path2 = path.clone();   //??????
                 let fd = Memo::new(
                     move |_|  {
