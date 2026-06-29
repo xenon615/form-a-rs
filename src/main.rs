@@ -1,10 +1,12 @@
-use leptos::{leptos_dom::logging::console_log, prelude::*};
+use leptos::{leptos_dom::logging::console_log, prelude::*, svg::view};
 use serde::Deserialize;
 use serde_json::{Value, json};
 use wasm_bindgen::JsCast;
 use gloo_net::http::Request;
 mod functions;
 use functions::{update_data, delete_data, is_show};
+
+use crate::functions::get_data;
 
 fn main() {
     console_error_panic_hook::set_once();
@@ -66,6 +68,10 @@ pub enum SpecificFields {
     Text,
     #[serde(rename = "select")]
     Select(ChoiceLike),
+
+    #[serde(rename = "radio")]
+    Radio(ChoiceLike),
+
     #[serde(rename = "group")]
     Group(ObjectLike)
 }
@@ -222,17 +228,17 @@ fn Jachc () -> impl IntoView {
     view! {
         <button
             class="primary"
-            // on:click= move |_| update_data("first_name".into(), "ASD!!".into())
+            on:click= move |_| update_data("sex".into(), "m".into())
             // on:click = move |_| {
             //     let path = vec!["stuff","backup","where"];
             //     let f = get_field(&path[0..1]);
             //     console_log(&format!("{:?}", f.empty_value()));
             // }
 
-            on:click = move |_| {
-                let path = vec!["stuff","backup","where"];
-                delete_data(&path[0..2]);
-            }
+            // on:click = move |_| {
+            //     let path = vec!["stuff","backup","where"];
+            //     delete_data(&path[0..2]);
+            // }
 
 
         >
@@ -287,9 +293,6 @@ fn Fields(fields: Vec<FieldA>, path: String, data: Memo<Value>) -> impl IntoView
     }
 }
 
-
-
-
 // ---
 
 #[component]
@@ -298,7 +301,6 @@ fn Field(field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
     view! {
             <div>
         {
-
             match &field.specific {
                 SpecificFields::Text => view! {
                     <FText field = field.clone() path data />
@@ -307,8 +309,12 @@ fn Field(field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
                     <FGroup field=field.clone() specific=g.clone() path data/>
                 }.into_any(),
 
-                SpecificFields::Select(s) => view! {
-                    <FSelect field=field.clone() specific=s.clone() path data/>
+                SpecificFields::Select(c) => view! {
+                    <FSelect field=field.clone() specific=c.clone() path data/>
+                }.into_any(),
+
+                SpecificFields::Radio(c) => view! {
+                    <FRadio field=field.clone() specific=c.clone() path data/>
                 }.into_any(),
 
                 // _ => view! {
@@ -365,6 +371,32 @@ fn FSelect(field: FieldA, specific: ChoiceLike, path: String, data: Memo<Value>)
     }
 }
 
+#[component]
+fn FRadio(field: FieldA, specific: ChoiceLike, path: String, data: Memo<Value>) -> impl IntoView {
+    let id = format!("_{}",path);
+    view! {
+        <div class={format!("field-container {}", field.classes.join(" "))}>
+            <label for={id.clone()}>{field.label}</label>
+            {
+                specific.options.into_iter().map(| e | {
+                    let spare_value = e.value.clone();
+                    let spare_path = path.clone();
+                    view! {
+                    <label>{e.label}
+                        <input
+                            type="radio"
+                            value= {e.value.clone()}
+                            checked = move || data.get() == e.value.clone()
+                            on:change= move |_| update_data( spare_path.clone(), spare_value.clone().into())
+                        />
+                    </label>
+                }}).collect_view()
+
+            }
+        </div>
+    }
+}
+
 // ---
 
 #[component]
@@ -376,5 +408,7 @@ fn FGroup(field: FieldA, specific: ObjectLike, path: String, data: Memo<Value>) 
         </div>
     }
 }
+
+
 
 // ---

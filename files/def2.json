@@ -40,6 +40,19 @@
             },
 
             {
+                "type" : "radio",
+                "name" : "sex",
+                "label" : "Sex",
+                "default": "f",
+                "options": [
+                    {"value":"m", "label": "Dude"},
+                    {"value":"f", "label": "Girl"},
+                    {"value":"c", "label": "Camel"}
+                ]
+            },
+
+
+            {
                 "type" : "group",
                 "name" : "stuff",
                 "label" : "Stuff",
@@ -65,6 +78,7 @@
                                 "name": "where",
                                 "type": "select",
                                 "label": "Where",
+                                "default": "here",
                                 "options": [
                                     {"value": "here", "label": "Here"},
                                     {"value": "there", "label": "There"}
@@ -86,10 +100,7 @@
         "last_name": "Harleev",
         "stuff": {
             "name": "Pope",
-            "color": "red",
-            "backup" : {
-                "where": "here"
-            }
+            "color": "red"
         }
     }
 }
