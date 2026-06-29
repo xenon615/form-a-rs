@@ -50,8 +50,13 @@
                     {"value":"c", "label": "Camel"}
                 ]
             },
+            {
+                "type" : "textarea",
+                "name" : "info",
+                "label" : "Info",
+                "rows" : 4
 
-
+            },
             {
                 "type" : "group",
                 "name" : "stuff",
@@ -98,6 +103,7 @@
     "data" : {
         "first_name": "Ugon",
         "last_name": "Harleev",
+        "info": "Some Text",
         "stuff": {
             "name": "Pope",
             "color": "red"

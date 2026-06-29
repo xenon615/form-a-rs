@@ -62,10 +62,20 @@ pub struct ObjectLike {
 }
 
 #[derive(Deserialize, Clone, Debug)]
+pub struct TextareaLike {
+    #[serde(default)]
+    rows: u8
+}
+
+
+#[derive(Deserialize, Clone, Debug)]
 #[serde(tag = "type")]
+
 pub enum SpecificFields {
     #[serde(rename = "text")]
     Text,
+    #[serde(rename = "textarea")]
+    Textarea(TextareaLike),
     #[serde(rename = "select")]
     Select(ChoiceLike),
 
@@ -317,6 +327,10 @@ fn Field(field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
                     <FRadio field=field.clone() specific=c.clone() path data/>
                 }.into_any(),
 
+                SpecificFields::Textarea(t) => view! {
+                    <FTextarea field=field.clone() specific=t.clone() path  data/>
+                }.into_any(),
+
                 // _ => view! {
                 //     <div>Not implemented yet</div>
                 // }.into_any()
@@ -393,6 +407,26 @@ fn FRadio(field: FieldA, specific: ChoiceLike, path: String, data: Memo<Value>) 
                 }}).collect_view()
 
             }
+        </div>
+    }
+}
+
+// ---
+#[component]
+fn FTextarea(field: FieldA, specific: TextareaLike, path: String, data: Memo<Value>) -> impl IntoView {
+    let id = format!("_{}",path);
+    let clean_val = move || data.get().as_str().unwrap_or("").to_string();
+    view! {
+        <div class={format!("field-container {}", field.classes.join(" "))}>
+            <label for={id.clone()}>{field.label}</label>
+            <textarea
+                id={id}
+                rows = move | | (specific.rows != 0).then_some(specific.rows)
+
+                on:input=move |evt| update_data(path.clone().into(), event_target_value(&evt).into())
+            >
+                {clean_val}
+            </textarea>
         </div>
     }
 }
