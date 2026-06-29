@@ -52,7 +52,7 @@ struct Opt {
 }
 
 #[derive(Deserialize, Clone, Debug)]
-pub struct ChoiceLike {
+pub struct OptionsLike {
     options: Vec<Opt>,
 }
 
@@ -77,10 +77,12 @@ pub enum SpecificFields {
     #[serde(rename = "textarea")]
     Textarea(TextareaLike),
     #[serde(rename = "select")]
-    Select(ChoiceLike),
+    Select(OptionsLike),
 
     #[serde(rename = "radio")]
-    Radio(ChoiceLike),
+    Radio(OptionsLike),
+    #[serde(rename = "true-false")]
+    TrueFalse,
 
     #[serde(rename = "group")]
     Group(ObjectLike)
@@ -331,6 +333,10 @@ fn Field(field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
                     <FTextarea field=field.clone() specific=t.clone() path  data/>
                 }.into_any(),
 
+                SpecificFields::TrueFalse => view! {
+                    <FTrueFalse field=field.clone() path  data/>
+                }.into_any(),
+
                 // _ => view! {
                 //     <div>Not implemented yet</div>
                 // }.into_any()
@@ -362,7 +368,7 @@ fn FText(field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
 // ---
 
 #[component]
-fn FSelect(field: FieldA, specific: ChoiceLike, path: String, data: Memo<Value>) -> impl IntoView {
+fn FSelect(field: FieldA, specific: OptionsLike, path: String, data: Memo<Value>) -> impl IntoView {
     let id = format!("_{}",path);
     let val = move || data.get().as_str().unwrap_or("").to_string();
     view! {
@@ -386,7 +392,7 @@ fn FSelect(field: FieldA, specific: ChoiceLike, path: String, data: Memo<Value>)
 }
 
 #[component]
-fn FRadio(field: FieldA, specific: ChoiceLike, path: String, data: Memo<Value>) -> impl IntoView {
+fn FRadio(field: FieldA, specific: OptionsLike, path: String, data: Memo<Value>) -> impl IntoView {
     let id = format!("_{}",path);
     view! {
         <div class={format!("field-container {}", field.classes.join(" "))}>
@@ -412,6 +418,7 @@ fn FRadio(field: FieldA, specific: ChoiceLike, path: String, data: Memo<Value>) 
 }
 
 // ---
+
 #[component]
 fn FTextarea(field: FieldA, specific: TextareaLike, path: String, data: Memo<Value>) -> impl IntoView {
     let id = format!("_{}",path);
@@ -434,6 +441,30 @@ fn FTextarea(field: FieldA, specific: TextareaLike, path: String, data: Memo<Val
 // ---
 
 #[component]
+fn FTrueFalse(field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
+    let id = format!("_{}",path);
+
+    let toggle = move | ev | {
+        let checked = event_target_checked(&ev);
+        update_data(path.clone(), checked.into());
+    };
+
+    view! {
+        <div class={format!("field-container {}", field.classes.join(" "))}>
+            <label for={id.clone()}>{field.label}</label>
+            <input
+                type ="checkbox"
+                checked = move | | data.get().as_bool()
+                on:change= toggle
+                />
+
+        </div>
+    }
+}
+
+// ---
+
+#[component]
 fn FGroup(field: FieldA, specific: ObjectLike, path: String, data: Memo<Value>) -> impl IntoView {
     view! {
         <div class={format!("group {}", field.classes.join(" "))}>
@@ -442,7 +473,5 @@ fn FGroup(field: FieldA, specific: ObjectLike, path: String, data: Memo<Value>) 
         </div>
     }
 }
-
-
 
 // ---

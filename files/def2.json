@@ -93,7 +93,15 @@
                                 "name": "when",
                                 "type": "text",
                                 "label": "When"
+                            },
+                            {
+                                "name": "is_done",
+                                "type": "true-false",
+                                "label": "Done?",
+                                "default": true
                             }
+
+
                         ]
                     }
                 ]
