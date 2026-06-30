@@ -99,9 +99,18 @@
                                 "type": "true-false",
                                 "label": "Done?",
                                 "default": true
+                            },
+                            {
+                                "name": "desire",
+                                "type": "checkbox",
+                                "label": "What you want",
+                                "default": "drink",
+                                "options": [
+                                    {"value": "eat", "label": "Eat"},
+                                    {"value": "drink", "label": "Drink"},
+                                    {"value": "sleep", "label": "Sleep"}
+                                ]
                             }
-
-
                         ]
                     }
                 ]

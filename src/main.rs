@@ -81,6 +81,9 @@ pub enum SpecificFields {
 
     #[serde(rename = "radio")]
     Radio(OptionsLike),
+
+    #[serde(rename = "checkbox")]
+    CheckBox(OptionsLike),
     #[serde(rename = "true-false")]
     TrueFalse,
 
@@ -337,6 +340,10 @@ fn Field(field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
                     <FTrueFalse field=field.clone() path  data/>
                 }.into_any(),
 
+                SpecificFields::CheckBox(c) => view! {
+                    <FCheckBox field=field.clone() specific=c.clone() path  data/>
+                }.into_any(),
+
                 // _ => view! {
                 //     <div>Not implemented yet</div>
                 // }.into_any()
@@ -475,3 +482,28 @@ fn FGroup(field: FieldA, specific: ObjectLike, path: String, data: Memo<Value>) 
 }
 
 // ---
+
+#[component]
+fn FCheckBox(field: FieldA, specific: OptionsLike, path: String, data: Memo<Value>) -> impl IntoView {
+    let id = format!("_{}",path);
+    view! {
+        <div class={format!("field-container {}", field.classes.join(" "))}>
+            <label for={id.clone()}>{field.label}</label>
+            {
+                specific.options.into_iter().map(| e | {
+                    let spare_value = e.value.clone();
+                    let spare_path = path.clone();
+                    view! {
+                    <label>{e.label}
+                        <input
+                            type="checkbox"
+                            value= {e.value.clone()}
+                            checked = move || data.get() == e.value.clone()
+                            on:change= move |_| update_data( spare_path.clone(), spare_value.clone().into())
+                        />
+                    </label>
+                }}).collect_view()
+            }
+        </div>
+    }
+}
