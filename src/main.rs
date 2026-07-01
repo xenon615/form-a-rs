@@ -88,7 +88,14 @@ pub enum SpecificFields {
     TrueFalse,
 
     #[serde(rename = "group")]
-    Group(ObjectLike)
+    Group(ObjectLike),
+
+    #[serde(rename = "repeater")]
+    Repeater(ObjectLike),
+
+    #[serde(rename = "table")]
+    Table(ObjectLike)
+
 }
 
 #[derive(Deserialize, Debug, Clone)]
@@ -344,9 +351,14 @@ fn Field(field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
                     <FCheckBox field=field.clone() specific=c.clone() path  data/>
                 }.into_any(),
 
-                // _ => view! {
-                //     <div>Not implemented yet</div>
-                // }.into_any()
+                SpecificFields::Repeater(r) => view! {
+                    <FRepeater field=field.clone() specific=r.clone() path data/>
+                }.into_any(),
+
+
+                _ => view! {
+                    <div>Not implemented yet</div>
+                }.into_any()
             }
 
         }
@@ -397,6 +409,8 @@ fn FSelect(field: FieldA, specific: OptionsLike, path: String, data: Memo<Value>
         </div>
     }
 }
+
+// ---
 
 #[component]
 fn FRadio(field: FieldA, specific: OptionsLike, path: String, data: Memo<Value>) -> impl IntoView {
@@ -487,7 +501,7 @@ fn FGroup(field: FieldA, specific: ObjectLike, path: String, data: Memo<Value>) 
 fn FCheckBox(field: FieldA, specific: OptionsLike, path: String, data: Memo<Value>) -> impl IntoView {
     let id = format!("_{}",path);
     view! {
-        <div class={format!("field-container {}", field.classes.join(" "))}>
+        <div class={format!("checkbox {}", field.classes.join(" "))}>
             <label for={id.clone()}>{field.label}</label>
             {
                 specific.options.into_iter().map(| e | {
@@ -503,6 +517,73 @@ fn FCheckBox(field: FieldA, specific: OptionsLike, path: String, data: Memo<Valu
                         />
                     </label>
                 }}).collect_view()
+            }
+        </div>
+    }
+}
+
+// ---
+
+// #[component]
+// fn FRepeater(field: FieldA, specific: ObjectLike, path: String, data: Memo<Value>) -> impl IntoView {
+//     let each = move || serde_json::from_value::<Vec<Value>>(data.get()).unwrap_or(vec![]);
+//     view! {
+//         <div class={format!("field-container {}", field.classes.join(" "))}>
+//             <label for={path.clone()}>{field.label}</label>
+//             <ForEnumerate
+//                 each = move || each().clone()
+//                 key = | e | e.clone()
+//                 children = move |idx, row | {
+//                     let fp = format!("{}--{}", path.clone(), field.name);
+//                     let fd = Memo::new(move |_|  row.clone() );
+//                     let data_path = format!("{}--{}", path, idx.get());
+
+//                     view! {
+
+//                         <div>
+//                             <Fields fields= specific.fields.clone() path = fp  data = fd />
+//                         </div>
+//                         <div class="controls">
+//                             <span
+//                                 on:click = move |_| delete_data(data_path.clone())
+//                             >
+//                             x  {idx.get()}
+//                             </span>
+//                         </div>
+//                     }
+//                 }
+//             />
+//         </div>
+//     }
+// }
+
+
+#[component]
+fn FRepeater(field: FieldA, specific: ObjectLike, path: String, data: Memo<Value>) -> impl IntoView {
+    let each = move || serde_json::from_value::<Vec<Value>>(data.get()).unwrap_or(vec![]);
+    view! {
+        <div class={format!("field-container {}", field.classes.join(" "))}>
+            <label for={path.clone()}>{field.label}</label>
+
+            {
+                move || each().into_iter().enumerate().map(| (idx, row) | {
+                    let fp = format!("{}--{}", path.clone(), field.name);
+                    let fd = Memo::new(move |_|  row.clone() );
+                    let data_path = format!("{}--{}", path, idx);
+                    view! {
+                        <div>
+                            <Fields fields= specific.fields.clone() path = fp  data = fd />
+                        </div>
+                        <div class="controls">
+                            <span
+                                on:click = move |_| delete_data(data_path.clone())
+                            >
+                            x  {idx}
+                            </span>
+                        </div>
+
+                    }
+                }).collect_view()
             }
         </div>
     }

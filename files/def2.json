@@ -18,6 +18,18 @@
         ],
         "fields" : [
             {
+                "type":"repeater",
+                "label":"Tasks",
+                "name": "tasks",
+                "fields": [
+                    {
+                        "type": "text",
+                        "name": "task_name",
+                        "label": "Task name"
+                    }
+                ]
+            },
+            {
                 "type" : "text",
                 "name" : "first_name",
                 "label" : "First Name",
@@ -124,6 +136,12 @@
         "stuff": {
             "name": "Pope",
             "color": "red"
-        }
+        },
+        "tasks": [
+            {"task_name" : "First"},
+            {"task_name" : "Second"},
+            {"task_name" : "Third"}
+
+        ]
     }
 }
