@@ -26,6 +26,17 @@
                         "type": "text",
                         "name": "task_name",
                         "label": "Task name"
+                    },
+                    {
+                        "type": "radio",
+                        "name": "priority",
+                        "label": "priority",
+                        "default": "l",
+                        "options": [
+                            {"value":"h", "label": "High"},
+                            {"value":"m", "label": "Medium"},
+                            {"value":"l", "label": "Lazy"}
+                        ]
                     }
                 ]
             },
@@ -138,10 +149,9 @@
             "color": "red"
         },
         "tasks": [
-            {"task_name" : "First"},
-            {"task_name" : "Second"},
-            {"task_name" : "Third"}
-
+            {"task_name" : "First", "priority": "h"},
+            {"task_name" : "Second", "priority": "h"},
+            {"task_name" : "Third", "priority": "l"}
         ]
     }
 }
