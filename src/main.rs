@@ -567,7 +567,7 @@ fn FRepeater(field: FieldA, specific: ObjectLike, path: String, data: Memo<Value
 
             {
                 move || each().into_iter().enumerate().map(| (idx, row) | {
-                    let fp = format!("{}--{}", path.clone(), field.name);
+                    let fp = format!("{}--{}", path.clone(), idx);
                     let fd = Memo::new(move |_|  row.clone() );
                     let data_path = format!("{}--{}", path, idx);
                     view! {

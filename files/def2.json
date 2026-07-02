@@ -30,8 +30,8 @@
                     {
                         "type": "radio",
                         "name": "priority",
-                        "label": "priority",
-                        "default": "l",
+                        "label": "Priority",
+                        "default": "m",
                         "options": [
                             {"value":"h", "label": "High"},
                             {"value":"m", "label": "Medium"},
@@ -147,11 +147,10 @@
         "stuff": {
             "name": "Pope",
             "color": "red"
-        },
+        }
+        ,
         "tasks": [
-            {"task_name" : "First", "priority": "h"},
-            {"task_name" : "Second", "priority": "h"},
-            {"task_name" : "Third", "priority": "l"}
+            {"task_name" : "First"}
         ]
     }
 }

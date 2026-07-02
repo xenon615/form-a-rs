@@ -21,6 +21,7 @@ pub fn update_data1(path: String, value: Value) {
 }
 
 pub fn update_data(path_str: String, value: Value) {
+    // console_log(&path_str);
     let w = use_context::<WriteSignal<Value>>().unwrap();
     let path = path_str.split("--").collect::<Vec<_>>();
     w.update(| p |  {
@@ -34,6 +35,7 @@ pub fn update_data(path_str: String, value: Value) {
                 );
             } else if f.is_array() {
                 let t = f.as_array().unwrap();
+                console_log(*key);
                 let i = key.parse::<usize>().unwrap();
 
                 f = if t.get(i).is_none()  {
