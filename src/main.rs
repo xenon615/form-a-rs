@@ -1,12 +1,13 @@
 use leptos::{leptos_dom::logging::console_log, prelude::*, svg::view};
 use serde::Deserialize;
 use serde_json::{Value, json};
+// use uuid::uuid;
 use wasm_bindgen::JsCast;
 use gloo_net::http::Request;
 mod functions;
 use functions::{update_data, delete_data, is_show};
 
-use crate::functions::get_data;
+use crate::functions::{get_data, set_ids};
 
 fn main() {
     console_error_panic_hook::set_once();
@@ -185,8 +186,10 @@ fn App() -> impl  IntoView {
 #[component]
 fn AForm(form: FormA) -> impl IntoView {
     let (data, set_data) = signal(form.data);
+
     let memo = Memo::new( move | _ | data.get());
     provide_context(set_data);
+    set_ids();
     provide_context(data);
     provide_context(form.def.fields.clone());
     view! {
@@ -250,7 +253,14 @@ fn Jachc () -> impl IntoView {
     view! {
         <button
             class="primary"
-            on:click= move |_| update_data("sex".into(), "m".into())
+            on:click= move |_| {
+                console_log("clicked");
+                // leptos::logging::log!("{:?}", "aaaaaaaaaaaaaaaa");
+                update_data("tasks--0--___id".into(), 1.into())
+                // console_log("here");
+                // let tr = ArcTrigger::new();
+                // tr.notify();
+            }
             // on:click = move |_| {
             //     let path = vec!["stuff","backup","where"];
             //     let f = get_field(&path[0..1]);
@@ -291,21 +301,20 @@ fn Fields(fields: Vec<FieldA>, path: String, data: Memo<Value>) -> impl IntoView
                 let fd = Memo::new(
                     move |_|  {
                         data.with(|d| {
-                            // console_log(&name);
                                 match d.get(name.clone()) {
                                     Some(v) => v.clone(),
                                     None => {
                                         if !default.is_null() {
                                             update_data(path2.clone(), default.clone());
                                         }
-                                        Value::Null
+                                        // Value::Null
+                                        default.clone()
                                     }
                                 }
                             }
                         )
                     }
                 );
-                // console_log(&format!("{:?}", fd.get()));
 
                view! {
                    <Field field path  data=fd/>
@@ -354,8 +363,6 @@ fn Field(field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
                 SpecificFields::Repeater(r) => view! {
                     <FRepeater field=field.clone() specific=r.clone() path data/>
                 }.into_any(),
-
-
                 _ => view! {
                     <div>Not implemented yet</div>
                 }.into_any()
@@ -425,6 +432,7 @@ fn FRadio(field: FieldA, specific: OptionsLike, path: String, data: Memo<Value>)
                     view! {
                     <label>{e.label}
                         <input
+                            name = path.clone()
                             type="radio"
                             value= {e.value.clone()}
                             checked = move || data.get() == e.value.clone()
@@ -524,67 +532,45 @@ fn FCheckBox(field: FieldA, specific: OptionsLike, path: String, data: Memo<Valu
 
 // ---
 
-// #[component]
-// fn FRepeater(field: FieldA, specific: ObjectLike, path: String, data: Memo<Value>) -> impl IntoView {
-//     let each = move || serde_json::from_value::<Vec<Value>>(data.get()).unwrap_or(vec![]);
-//     view! {
-//         <div class={format!("field-container {}", field.classes.join(" "))}>
-//             <label for={path.clone()}>{field.label}</label>
-//             <ForEnumerate
-//                 each = move || each().clone()
-//                 key = | e | e.clone()
-//                 children = move |idx, row | {
-//                     let fp = format!("{}--{}", path.clone(), field.name);
-//                     let fd = Memo::new(move |_|  row.clone() );
-//                     let data_path = format!("{}--{}", path, idx.get());
-
-//                     view! {
-
-//                         <div>
-//                             <Fields fields= specific.fields.clone() path = fp  data = fd />
-//                         </div>
-//                         <div class="controls">
-//                             <span
-//                                 on:click = move |_| delete_data(data_path.clone())
-//                             >
-//                             x  {idx.get()}
-//                             </span>
-//                         </div>
-//                     }
-//                 }
-//             />
-//         </div>
-//     }
-// }
-
-
 #[component]
 fn FRepeater(field: FieldA, specific: ObjectLike, path: String, data: Memo<Value>) -> impl IntoView {
     let each = move || serde_json::from_value::<Vec<Value>>(data.get()).unwrap_or(vec![]);
+    let cc = Memo::new(  move |_| each().iter().len());
+
+    let path_cloned = path.clone();
     view! {
         <div class={format!("field-container {}", field.classes.join(" "))}>
             <label for={path.clone()}>{field.label}</label>
-
-            {
-                move || each().into_iter().enumerate().map(| (idx, row) | {
-                    let fp = format!("{}--{}", path.clone(), idx);
+            <ForEnumerate
+                each = move || each().clone()
+                key = | e | e["___id"].clone()
+                children = move |idx, row | {
+                    let row_spare = row.clone();
+                    let fp = format!("{}--{}", path.clone(), idx.get());
                     let fd = Memo::new(move |_|  row.clone() );
-                    let data_path = format!("{}--{}", path, idx);
+                    let delete_path = format!("{}--{}", path.clone(), row_spare["___id"].clone());
                     view! {
                         <div>
                             <Fields fields= specific.fields.clone() path = fp  data = fd />
                         </div>
                         <div class="controls">
                             <span
-                                on:click = move |_| delete_data(data_path.clone())
+                                on:click = move |_| delete_data(delete_path.clone())
                             >
-                            x  {idx}
+                            x  {idx.get()}
                             </span>
                         </div>
-
                     }
-                }).collect_view()
-            }
+                }
+            />
+            <button
+                on:click = move |_| {
+                    let c = cc.get();
+                    update_data(format!("{}--{}", path_cloned, c),json!({"___id": c}))
+                }
+            >
+                Add
+            </button>
         </div>
     }
 }
