@@ -1,0 +1,66 @@
+.col.col-1 {
+    flex-basis: 5.55556%;
+}
+.col.col-2 {
+    flex-basis: 11.11111%;
+}
+.col.col-3 {
+    flex-basis: 16.66667%;
+}
+.col.col-4 {
+    flex-basis: 22.22222%;
+}
+.col.col-5 {
+    flex-basis: 27.77778%;
+}
+.col.col-6 {
+    flex-basis: 33.33333%;
+}
+.col.col-7 {
+    flex-basis: 38.88889%;
+}
+.col.col-8 {
+    flex-basis: 44.44444%;
+}
+.col.col-9 {
+    flex-basis: 50%;
+}
+.col.col-10 {
+    flex-basis: 55.55556%;
+}
+.col.col-11 {
+    flex-basis: 61.11111%;
+}
+.col.col-12 {
+    flex-basis: 66.66667%;
+}
+.col.col-13 {
+    flex-basis: 72.22222%;
+}
+.col.col-14 {
+    flex-basis: 77.77778%;
+}
+.col.col-15 {
+    flex-basis: 83.33333%;
+}
+.col.col-16 {
+    flex-basis: 88.88889%;
+}
+.col.col-17 {
+    flex-basis: 94.44444%;
+}
+.col.col-18 {
+    flex-basis: 100%;
+}
+.col.col-auto {
+    flex-basis: auto;
+}
+.col .col-narrow {
+    flex: 0 1 1%;
+}
+.col .col-grow {
+    flex-grow: 1;
+}
+.col .col-shrink {
+    flex-shrink: 1;
+}

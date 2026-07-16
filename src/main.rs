@@ -1,4 +1,4 @@
-use leptos::{leptos_dom::logging::console_log, prelude::*, svg::view};
+use leptos::{leptos_dom::logging::console_log, prelude::*, svg::view, tachys::view::Position};
 use serde::Deserialize;
 use serde_json::{Value, json};
 // use uuid::uuid;
@@ -29,7 +29,6 @@ struct FormDef {
     #[serde(default)]
     title: String,
     #[serde(rename = "remoteSubmit")]
-
     #[allow(dead_code)]
     remote_submit: bool,
     fields: Vec<FieldA>,
@@ -44,6 +43,18 @@ struct Button {
     btype: String,
     #[serde(default)]
     action: String
+}
+
+#[derive(Deserialize, Clone, Debug, Default)]
+#[serde(untagged)]
+enum Label {
+     #[default]
+    Empty,
+    Scalar(String),
+    Object {
+        text: String,
+        position: String
+    }
 }
 
 #[derive(Deserialize, Clone, Debug)]
@@ -71,7 +82,6 @@ pub struct TextareaLike {
 
 #[derive(Deserialize, Clone, Debug)]
 #[serde(tag = "type")]
-
 pub enum SpecificFields {
     #[serde(rename = "text")]
     Text,
@@ -123,7 +133,6 @@ pub enum Compare {
 pub struct Logic {
     path: String,
     value: Value,
-    // compare: String,
     compare: Compare,
     relation: Relation
 }
@@ -132,9 +141,12 @@ pub struct Logic {
 pub struct FieldA {
         name: String,
         #[serde(default)]
-        label: String,
+        label: Label,
         #[serde(default)]
         classes: Vec<String>,
+        #[serde(rename = "breakAfter")]
+        #[serde(default)]
+        break_after: bool,
         #[serde(default)]
         default: Value,
         #[serde(rename = "cLogic")]
@@ -220,7 +232,7 @@ fn AForm(form: FormA) -> impl IntoView {
                     }).collect_view()
                 }
             </div>
-            <Jachc/>
+            // <Jachc/>
             <Pretty data/>
 
         </div>
@@ -328,40 +340,71 @@ fn Fields(fields: Vec<FieldA>, path: String, data: Memo<Value>) -> impl IntoView
 
 #[component]
 fn Field(field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
+    let (classes, set_classes) = signal(format!("field-wrap col {} ", field.classes.join(" ")));
+    let id = format!("_{}",path);
+
+    let (label_text, label_position) = match field.clone().label {
+        Label::Scalar(l) => (l, "before".to_string()),
+        Label::Object { text, position } => (text, position),
+        Label::Empty => (String::new(), String::new())
+    };
 
     view! {
-            <div>
+            <div class= move || classes.get() >
+
+                {
+                    move ||
+                    if !label_text.is_empty() {
+                        view! {
+                                <label
+                                    class= {label_position.clone()}
+                                    for={id.clone()}>{label_text.clone()}
+
+                                </label>
+                        }.into_any()
+                    } else {
+                        view! {}.into_any()
+                    }
+                }
+
+                // .line-break(v-if='field.breakAfter')
+
         {
             match &field.specific {
-                SpecificFields::Text => view! {
-                    <FText field = field.clone() path data />
-                }.into_any(),
-                SpecificFields::Group(g) => view! {
-                    <FGroup field=field.clone() specific=g.clone() path data/>
-                }.into_any(),
+                SpecificFields::Text => {
+                    set_classes.update(|c|  c.push_str("text") );
+                    view! {<FText _field = field.clone() path data />}.into_any()
+
+                },
+                SpecificFields::Group(g) => {
+                    set_classes.update(|c|  c.push_str("group") );
+                    view! {
+                        <FGroup _field=field.clone() specific=g.clone() path data/>
+                    }.into_any()
+                },
 
                 SpecificFields::Select(c) => view! {
-                    <FSelect field=field.clone() specific=c.clone() path data/>
+                    <FSelect _field=field.clone() specific=c.clone() path data/>
                 }.into_any(),
 
                 SpecificFields::Radio(c) => view! {
-                    <FRadio field=field.clone() specific=c.clone() path data/>
+                    <FRadio _field=field.clone() specific=c.clone() path data/>
                 }.into_any(),
 
                 SpecificFields::Textarea(t) => view! {
-                    <FTextarea field=field.clone() specific=t.clone() path  data/>
+                    <FTextarea _field=field.clone() specific=t.clone() path  data/>
                 }.into_any(),
 
                 SpecificFields::TrueFalse => view! {
-                    <FTrueFalse field=field.clone() path  data/>
+                    <FTrueFalse _field=field.clone() path  data/>
                 }.into_any(),
 
                 SpecificFields::CheckBox(c) => view! {
-                    <FCheckBox field=field.clone() specific=c.clone() path  data/>
+                    <FCheckBox _field=field.clone() specific=c.clone() path  data/>
                 }.into_any(),
 
                 SpecificFields::Repeater(r) => view! {
-                    <FRepeater field=field.clone() specific=r.clone() path data/>
+                    <FRepeater _field=field.clone() specific=r.clone() path data/>
                 }.into_any(),
                 _ => view! {
                     <div>Not implemented yet</div>
@@ -370,37 +413,41 @@ fn Field(field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
 
         }
             </div>
+            {
+                move || if field.break_after {
+                    view! {<div class="line-break"/>}.into_any()
+                } else {
+                    view! {}.into_any()
+                }
+            }
     }
 }
 
 
 #[component]
-fn FText(field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
+fn FText(_field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
     let id = format!("_{}",path);
     let clean_val = move || data.get().as_str().unwrap_or("").to_string();
     view! {
-        <div class={format!("field-container {}", field.classes.join(" "))}>
-            <label for={id.clone()}>{field.label}</label>
-            <input
-                id={id}
-                type="text"
-                value=clean_val
-                on:input=move |evt| update_data(path.clone().into(), event_target_value(&evt).into())
-            />
-        </div>
+        <input
+            id={id}
+            class="field-input"
+            type="text"
+            value=clean_val
+            on:input=move |evt| update_data(path.clone().into(), event_target_value(&evt).into())
+        />
     }
 }
 
 // ---
 
 #[component]
-fn FSelect(field: FieldA, specific: OptionsLike, path: String, data: Memo<Value>) -> impl IntoView {
+fn FSelect(_field: FieldA, specific: OptionsLike, path: String, data: Memo<Value>) -> impl IntoView {
     let id = format!("_{}",path);
     let val = move || data.get().as_str().unwrap_or("").to_string();
     view! {
-        <div class={format!("field-container {}", field.classes.join(" "))}>
-            <label for={id.clone()}>{field.label}</label>
             <select
+                class="field-input"
                 id={id}
                 prop:value={val}
                 on:change = move |evt|  update_data(path.clone().into(), event_target_value(&evt).into())
@@ -413,18 +460,15 @@ fn FSelect(field: FieldA, specific: OptionsLike, path: String, data: Memo<Value>
                     }).collect_view()
                 }
             </select>
-        </div>
     }
 }
 
 // ---
 
 #[component]
-fn FRadio(field: FieldA, specific: OptionsLike, path: String, data: Memo<Value>) -> impl IntoView {
+fn FRadio(_field: FieldA, specific: OptionsLike, path: String, data: Memo<Value>) -> impl IntoView {
     let id = format!("_{}",path);
-    view! {
-        <div class={format!("field-container {}", field.classes.join(" "))}>
-            <label for={id.clone()}>{field.label}</label>
+    // view! {
             {
                 specific.options.into_iter().map(| e | {
                     let spare_value = e.value.clone();
@@ -442,35 +486,32 @@ fn FRadio(field: FieldA, specific: OptionsLike, path: String, data: Memo<Value>)
                 }}).collect_view()
 
             }
-        </div>
-    }
+
+    // }
 }
 
 // ---
 
 #[component]
-fn FTextarea(field: FieldA, specific: TextareaLike, path: String, data: Memo<Value>) -> impl IntoView {
+fn FTextarea(_field: FieldA, specific: TextareaLike, path: String, data: Memo<Value>) -> impl IntoView {
     let id = format!("_{}",path);
     let clean_val = move || data.get().as_str().unwrap_or("").to_string();
     view! {
-        <div class={format!("field-container {}", field.classes.join(" "))}>
-            <label for={id.clone()}>{field.label}</label>
-            <textarea
-                id={id}
-                rows = move | | (specific.rows != 0).then_some(specific.rows)
+        <textarea
+            id={id}
+            rows = move | | (specific.rows != 0).then_some(specific.rows)
 
-                on:input=move |evt| update_data(path.clone().into(), event_target_value(&evt).into())
-            >
-                {clean_val}
-            </textarea>
-        </div>
+            on:input=move |evt| update_data(path.clone().into(), event_target_value(&evt).into())
+        >
+            {clean_val}
+        </textarea>
     }
 }
 
 // ---
 
 #[component]
-fn FTrueFalse(field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
+fn FTrueFalse(_field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
     let id = format!("_{}",path);
 
     let toggle = move | ev | {
@@ -479,38 +520,29 @@ fn FTrueFalse(field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
     };
 
     view! {
-        <div class={format!("field-container {}", field.classes.join(" "))}>
-            <label for={id.clone()}>{field.label}</label>
-            <input
-                type ="checkbox"
-                checked = move | | data.get().as_bool()
-                on:change= toggle
-                />
-
-        </div>
+        <input
+            type ="checkbox"
+            checked = move | | data.get().as_bool()
+            on:change= toggle
+        />
     }
 }
 
 // ---
 
 #[component]
-fn FGroup(field: FieldA, specific: ObjectLike, path: String, data: Memo<Value>) -> impl IntoView {
+fn FGroup(_field: FieldA, specific: ObjectLike, path: String, data: Memo<Value>) -> impl IntoView {
     view! {
-        <div class={format!("group {}", field.classes.join(" "))}>
-            <label for={path.clone()}>{field.label}</label>
-            <Fields fields= specific.fields path data/>
-        </div>
+        <Fields fields= specific.fields path data/>
     }
 }
 
 // ---
 
 #[component]
-fn FCheckBox(field: FieldA, specific: OptionsLike, path: String, data: Memo<Value>) -> impl IntoView {
+fn FCheckBox(_field: FieldA, specific: OptionsLike, path: String, data: Memo<Value>) -> impl IntoView {
     let id = format!("_{}",path);
-    view! {
-        <div class={format!("checkbox {}", field.classes.join(" "))}>
-            <label for={id.clone()}>{field.label}</label>
+    // view! {
             {
                 specific.options.into_iter().map(| e | {
                     let spare_value = e.value.clone();
@@ -526,21 +558,20 @@ fn FCheckBox(field: FieldA, specific: OptionsLike, path: String, data: Memo<Valu
                     </label>
                 }}).collect_view()
             }
-        </div>
-    }
+
+    // }
 }
 
 // ---
 
 #[component]
-fn FRepeater(field: FieldA, specific: ObjectLike, path: String, data: Memo<Value>) -> impl IntoView {
+fn FRepeater(_field: FieldA, specific: ObjectLike, path: String, data: Memo<Value>) -> impl IntoView {
     let each = move || serde_json::from_value::<Vec<Value>>(data.get()).unwrap_or(vec![]);
     let cc = Memo::new(  move |_| each().iter().len());
 
     let path_cloned = path.clone();
     view! {
-        <div class={format!("field-container {}", field.classes.join(" "))}>
-            <label for={path.clone()}>{field.label}</label>
+
             <ForEnumerate
                 each = move || each().clone()
                 key = | e | e["___id"].clone()
@@ -571,6 +602,6 @@ fn FRepeater(field: FieldA, specific: ObjectLike, path: String, data: Memo<Value
             >
                 Add
             </button>
-        </div>
+
     }
 }

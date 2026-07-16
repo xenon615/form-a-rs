@@ -32,7 +32,6 @@
                         "type": "radio",
                         "name": "priority",
                         "label": "Priority",
-                        "default": "m",
                         "options": [
                             {"value":"h", "label": "High"},
                             {"value":"m", "label": "Medium"},
@@ -151,7 +150,7 @@
         }
         ,
         "tasks": [
-            {"priority":"m"}
+            {"priority":"h"}
         ]
     }
 }
