@@ -51,8 +51,8 @@ body {
     }
 }
 
+
 .group {
-    padding-left: 2em;
     border-radius: 5px;
     border: 1px dotted  #999;
 }
@@ -61,4 +61,68 @@ body {
     background-color: blueviolet;
     font-size: 2em;
     color: wheat;
+}
+
+
+.horizontal .options {
+    display: flex;
+}
+
+.option-wrap {
+    padding: 3px;
+}
+
+.option-wrap label{
+    font-weight: normal;
+}
+.option-wrap input{
+    margin: 8px;
+}
+
+button {
+    font-size: 1.2 em;
+    margin: 10px 5px;
+    width: 20%;
+    outline: none;
+    box-shadow: none;
+    border: none;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.3);
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.5);
+    }
+}
+
+.repeater {
+    & .row {
+        align-items: center;
+        display: flex;
+        border-bottom: 1px solid #eee;
+        background-color: rgba(255, 255, 255, 0.1);
+        transition: filter 0.3s ease;
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        & .controls {
+            display: flex;
+            justify-content: center;
+            flex-basis: 10%;
+            & span {
+                font-size: 2em;
+                font-weight: bold;
+                cursor: pointer;
+                color: #aaa;
+                &:hover {
+                    color: #666;
+                }
+            }
+        }
+        & .fields-wrap {
+            padding: 0;
+            flex: 1 0 90%;
+        }
+    }
+    button {
+        font-size: 2em;
+    }
 }

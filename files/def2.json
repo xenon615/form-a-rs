@@ -18,33 +18,10 @@
         ],
         "fields" : [
             {
-                "type":"repeater",
-                "label":"Tasks",
-                "name": "tasks",
-                "fields": [
-                    {
-                        "type": "text",
-                        "name": "task_name",
-                        "label": "Task name",
-                        "default":"NoNo"
-                    },
-                    {
-                        "type": "radio",
-                        "name": "priority",
-                        "label": "Priority",
-                        "options": [
-                            {"value":"h", "label": "High"},
-                            {"value":"m", "label": "Medium"},
-                            {"value":"l", "label": "Lazy"}
-                        ]
-                    }
-                ]
-            },
-            {
                 "type" : "text",
                 "name" : "first_name",
                 "label" : "First Name",
-                "classes": ["is-cell", "cell-6"],
+                "classes": ["col-6"],
                 "default": "Raymond",
                 "cLogic": [
                     {
@@ -59,7 +36,8 @@
             {
                 "type" : "text",
                 "name" : "last_name",
-                "label" : "Last Name"
+                "label" : "Last Name",
+                "classes": ["col-4"]
             },
 
             {
@@ -67,6 +45,7 @@
                 "name" : "sex",
                 "label" : "Sex",
                 "default": "f",
+                "classes": ["horizontal", "col-6"],
                 "options": [
                     {"value":"m", "label": "Dude"},
                     {"value":"f", "label": "Girl"},
@@ -77,8 +56,8 @@
                 "type" : "textarea",
                 "name" : "info",
                 "label" : "Info",
-                "rows" : 4
-
+                "rows": 10,
+                "classes" : ["col-12"]
             },
             {
                 "type" : "group",
@@ -134,6 +113,30 @@
                                     {"value": "sleep", "label": "Sleep"}
                                 ]
                             }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type":"repeater",
+                "label":"Tasks",
+                "name": "tasks",
+                "breakAfter": true,
+                "fields": [
+                    {
+                        "type": "text",
+                        "name": "task_name",
+                        "label": "Task name",
+                        "default":"NoNo"
+                    },
+                    {
+                        "type": "radio",
+                        "name": "priority",
+                        "label": "Priority",
+                        "options": [
+                            {"value":"h", "label": "High"},
+                            {"value":"m", "label": "Medium"},
+                            {"value":"l", "label": "Lazy"}
                         ]
                     }
                 ]

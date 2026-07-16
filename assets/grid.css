@@ -55,6 +55,9 @@
 .col.col-auto {
     flex-basis: auto;
 }
+.col {
+    flex-basis: 100%;
+}
 .col .col-narrow {
     flex: 0 1 1%;
 }
