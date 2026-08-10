@@ -1,6 +1,8 @@
 use leptos::{prelude::*, leptos_dom::logging::console_log};
 use serde_json::{Value, json};
-use crate::{SpecificFields, FieldA, Relation, Compare};
+use crate::{
+    fields::get_field
+};
 
 // pub fn update_data(path_str: String, value: Value) {
 //     console_log(&format!("{}  {:?}", path_str, value));
@@ -31,7 +33,7 @@ use crate::{SpecificFields, FieldA, Relation, Compare};
 //     })
 // }
 
-pub fn update_data(path_str: String, value: Value) {
+pub fn update(path_str: String, value: Value) {
     console_log(&format!("{}  {:?}", path_str, value));
     let w = use_context::<WriteSignal<Value>>().unwrap();
     let path = path_str.split("--").collect::<Vec<_>>();
@@ -65,27 +67,9 @@ pub fn update_data(path_str: String, value: Value) {
     })
 }
 
-
 // ---
 
-fn get_field(path: &[&str]) -> FieldA {
-    let r = use_context::<Vec<FieldA>>().unwrap();
-    // console_log(&format!("{:?}", path.join("-")));
-    let mut p = r;
-    let mut idx = 0;
-    loop {
-        let f = p.into_iter().find(| e| e.name == path[idx]).unwrap();
-        match f.specific  {
-            SpecificFields::Group(sf) if idx < path.len() - 1  => p = sf.fields,
-            _ => {break f}
-        }
-        idx += 1;
-    }
-}
-
-// ---
-
-pub fn get_data(path: String) -> Value{
+pub fn get(path: String) -> Value{
     let r = use_context::<ReadSignal<Value>>().unwrap();
     let path_arr = path.split("--").collect::<Vec<_>>();
     let mut p = r.get();
@@ -134,7 +118,7 @@ pub fn get_data(path: String) -> Value{
 //     })
 // }
 
-pub fn delete_data(path_str: String) {
+pub fn delete(path_str: String) {
     let path = path_str.split("--").collect::<Vec<_>>();
     console_log(&format!("{:?}", path));
     let w = use_context::<WriteSignal<Value>>().unwrap();
@@ -159,29 +143,6 @@ pub fn delete_data(path_str: String) {
 
         }
     })
-}
-
-
-// ---
-
-pub fn is_show(field: &FieldA) -> bool {
-    if field.c_logic.is_empty() {
-        return true;
-    }
-    let mut result = false;
-    for l in &field.c_logic {
-        let test = get_data(l.path.clone());
-        let l0 = match l.compare {
-            Compare::Eq => l.value == test,
-            Compare::MotEq => l.value != test,
-            _ => true
-        };
-        result = match l.relation {
-            Relation::And => l0 && result,
-            Relation::Or => l0 || result
-        }
-    }
-    result
 }
 
 // ---
