@@ -1,4 +1,6 @@
-use leptos::{leptos_dom::logging::console_log, prelude::*, svg::view, tachys::view::Position};
+use std::clone;
+
+use leptos::{attr::value, html::select, leptos_dom::logging::console_log, prelude::*, svg::view, tachys::view::Position};
 use serde::Deserialize;
 use serde_json::{Value, json};
 // use uuid::uuid;
@@ -169,6 +171,7 @@ impl FieldA {
     fn empty_value(&self) -> Value {
         match self.specific {
             SpecificFields::Group(_) => json!({}),
+            SpecificFields::CheckBox(_) => json!([]),
             _ => json!(())
         }
     }
@@ -176,8 +179,15 @@ impl FieldA {
 
 // ---
 
+// async fn get_form() -> Result<FormA, Error> {
+//     let t = Request::get("http://localhost:3000/")
+//         .send().await?.json::<FormA>().await?;
+//     Ok(t)
+// }
+    // TimeoutFuture::new(1_000).await;
+
 async fn get_form() -> Result<FormA, Error> {
-    let t = Request::get("http://localhost:3000/")
+    let t = Request::get("/files/def4.json")
         .send().await?.json::<FormA>().await?;
     Ok(t)
 }
@@ -224,9 +234,9 @@ fn AForm(form: FormA) -> impl IntoView {
                     ().into_any()
                 }
             }
-            // <div class="fields-wrap">
-                <Fields fields = form.def.fields path="".to_string() data=memo/>
-            // </div>
+
+            <Fields fields = form.def.fields path="".to_string() data=memo/>
+
 
             <div class="buttons">
                 {
@@ -241,7 +251,7 @@ fn AForm(form: FormA) -> impl IntoView {
                     }).collect_view()
                 }
             </div>
-            // <Jachc/>
+            <Jachc/>
             <Pretty data/>
 
         </div>
@@ -277,7 +287,7 @@ fn Jachc () -> impl IntoView {
             on:click= move |_| {
                 console_log("clicked");
                 // leptos::logging::log!("{:?}", "aaaaaaaaaaaaaaaa");
-                update_data("tasks--0--___id".into(), 1.into())
+                update_data("hobbies".into(), json!(["reading"]))
                 // console_log("here");
                 // let tr = ArcTrigger::new();
                 // tr.notify();
@@ -338,9 +348,9 @@ fn Fields(fields: Vec<FieldA>, path: String, data: Memo<Value>) -> impl IntoView
                         }
                     );
 
-                view! {
-                    <Field field path  data=fd/>
-                }
+                    view! {
+                        <Field field path  data=fd/>
+                    }
                 }
             </For>
         </div>
@@ -488,14 +498,15 @@ fn FRadio(_field: FieldA, specific: OptionsLike, path: String, data: Memo<Value>
     view! {
             <div class="options">
             {
-                specific.options.into_iter().map(| e | {
+                specific.options.into_iter().enumerate().map(| (idx, e) | {
                     let spare_value = e.value.clone();
                     let spare_path = path.clone();
+                    let opt_id = format!("{}-{}",id ,idx);
                     view! {
                         <div class="option-wrap">
-                            <label for={id.clone()}>{e.label}</label>
+                            <label for={opt_id.clone()}>{e.label}</label>
                             <input
-                                id = {id.clone()}
+                                id = {opt_id}
                                 name = path.clone()
                                 class="field-input"
                                 type="radio"
@@ -513,25 +524,117 @@ fn FRadio(_field: FieldA, specific: OptionsLike, path: String, data: Memo<Value>
 
 // ---
 
+// #[component]
+// fn FCheckBox(_field: FieldA, specific: OptionsLike, path: String, data: Memo<Value>) -> impl IntoView {
+//     let id = format!("_{}",path);
+//     view! {
+//             <div class="options">
+//             {
+//                 specific.options.into_iter().enumerate().map(| (idx, e) | {
+//                     let spare_value = e.value.clone();
+//                     // let spare_path = path.clone();
+//                     let data_path = format!("{}--{}",path.clone() ,idx);
+//                     let opt_id = format!("{}-{}",id ,idx);
+//                     view! {
+//                         <div class="option-wrap">
+//                             <label for={opt_id.clone()}>{e.label}</label>
+//                             <input
+//                                 id = {opt_id.clone()}
+//                                 name = {format!("{}", path.clone())}
+//                                 type="checkbox"
+//                                 value= {e.value.clone()}
+//                                 checked = move || data.get() == e.value.clone()
+//                                 on:change= move | evt | {
+//                                     if event_target_checked(&evt) {
+//                                         update_data( data_path.clone(), spare_value.clone().into())
+//                                     } else {
+//                                         delete_data( data_path.clone())
+//                                     }
+//                                     console_log(&format!("{:?}", event_target_checked(&evt)));
+
+//                                 }
+//                             />
+//                         </div>
+//                 }}).collect_view()
+//             }
+//             </div>
+//     }
+// }
+
 #[component]
 fn FCheckBox(_field: FieldA, specific: OptionsLike, path: String, data: Memo<Value>) -> impl IntoView {
     let id = format!("_{}",path);
+
+
     view! {
             <div class="options">
             {
-                specific.options.into_iter().map(| e | {
+
+                // let sarray  = Memo::new(move |_| {
+                //     match  data.get().as_array() {
+                //         Some(v) => v.iter().map(| e | e.as_str().unwrap_or("").to_string()).collect::<Vec<_>>(),
+                //         None => vec![]
+                //     }
+                // });
+                // // let (sarray_s, set_sarray_s) = signal(sarray);
+
+                // let in_array = move |v| {
+                //     match data.get().as_array() {
+                //         Some(v) => v.iter().map(| e | e.as_str().unwrap_or("").to_string()).collect::<Vec<_>>(),
+                //         None => vec![]
+                //     }.contains(&v)
+                // };
+                // let spare_spare_path = path.clone();
+                // let (sarray_s, set_sarray_s) = signal(vec!["reading".to_string()]);
+                specific.options.into_iter().enumerate().map(| (idx, e) | {
                     let spare_value = e.value.clone();
                     let spare_path = path.clone();
+                    let data_path = format!("{}--{}",path.clone() ,idx);
+                    let opt_id = format!("{}-{}",id ,idx);
+
                     view! {
                         <div class="option-wrap">
-                            <label for={id.clone()}>{e.label}</label>
+                            <label for={opt_id.clone()}>{e.label}</label>
                             <input
-                                id = {id.clone()}
+                                id = {opt_id.clone()}
                                 name = {format!("{}", path.clone())}
                                 type="checkbox"
                                 value= {e.value.clone()}
-                                checked = move || data.get() == e.value.clone()
-                                on:change= move |_| update_data( spare_path.clone(), spare_value.clone().into())
+                                // prop:checked = move | | in_array(e.value.clone())
+                                prop:checked = move | | match data.get().as_array() {
+                                    Some(v) => v.iter().map(| e | e.as_str().unwrap_or("").to_string()).collect::<Vec<_>>(),
+                                    None => vec![]
+                                }.contains(&e.value)
+
+                                on:change= move | evt |  {
+                                    if event_target_checked(&evt) {
+                                        console_log(&format!("{:?}", data.get()));
+
+                                        let new_data = data.get().as_array().unwrap().iter();
+                                        update_data( spare_path.clone(), json!(["reading", "kayaking"]));
+                                    } else {
+                                        update_data( spare_path.clone(), json!([]));
+                                    }
+                                    // console_log(&format!("{} {} ", checked, value));
+
+                                }
+
+                                // set_data( event_target_checked(&evt), spare_value.clone())
+                                // prop:checked = move | | sarray.get().contains(&e.value)
+                                // prop:checked = move | | sarray_s.get().contains(&e.value)
+                                // on:change= move | evt | {
+                                //     if event_target_checked(&evt) {
+                                //         update_data( data_path.clone(), spare_value.clone().into())
+                                //     } else {
+                                //         // console_log(&format!("{:?}", sarray.get()));
+
+
+                                //         // update_data( spare_path.clone(), data.get().into())
+                                //         // delete_data( data_path.clone())
+                                //     }
+                                //     console_log(&format!("{:?}", event_target_checked(&evt)));
+
+                                // }
                             />
                         </div>
                 }}).collect_view()
@@ -539,7 +642,6 @@ fn FCheckBox(_field: FieldA, specific: OptionsLike, path: String, data: Memo<Val
             </div>
     }
 }
-
 
 #[component]
 fn FTextarea(_field: FieldA, specific: TextareaLike, path: String, data: Memo<Value>) -> impl IntoView {

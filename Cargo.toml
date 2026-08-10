@@ -1,13 +1,12 @@
 [package]
-name = "form1"
+name = "form-a"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
 console_error_panic_hook = "0.1.7"
 gloo-net = "0.7.0"
-
 leptos = { version = "0.8.20", features = ["csr"] }
-serde = "1.0.228"
-serde_json = "1.0.150"
-wasm-bindgen = "0.2.126"
+serde = "1.0.229"
+serde_json = "1.0.151"
+wasm-bindgen = "0.2.127"

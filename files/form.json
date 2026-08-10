@@ -52,7 +52,6 @@
                 "type" : "radio",
                 "name" : "gender",
                 "label" : "Gender",
-                "default": "f",
                 "classes": ["horizontal", "col-6"],
                 "options": [
                     {"value":"m", "label": "Male"},
@@ -209,6 +208,7 @@
     "data" : {
         "first_name": "Ugon",
         "last_name": "Harleev",
+        "gender": "m",
         "tasks": [
             {}
         ]

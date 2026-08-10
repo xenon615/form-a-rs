@@ -12,24 +12,19 @@
           ],
           "fields" : [
               {
-                  "type" : "text",
-                  "name" : "first_name",
-                  "label" : "First Name",
-                  "classes": ["is-cell", "cell-6"],
-                  "default": "Raymond"
-              },
-              {
-                  "type" : "text",
-                  "name" : "last_name",
-                  "label" : "Last Name",
-                  "classes": ["is-cell", "cell-6"],
-                  "default": "Raymond"
+                  "type" : "checkbox",
+                  "name" : "hobbies",
+                  "label" : "Hobbies",
+                  "classes": ["horizontal", "col-12"],
+                  "options": [
+                      {"value":"reading", "label":"Reading"},
+                      {"value":"cooking", "label": "Cooking"},
+                      {"value":"kayaking", "label": "Kayaking"}
+                  ]
               }
-
           ]
       },
       "data" : {
-          "first_name": "Ugonyalo",
-          "last_name": "Reactov"
+
       }
 }
