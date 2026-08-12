@@ -27,7 +27,7 @@ fn main() {
     // TimeoutFuture::new(1_000).await;
 
 async fn get_form() -> Result<FormA, Error> {
-    let t = Request::get("/files/def2.json")
+    let t = Request::get("/files/def4.json")
         .send().await?.json::<FormA>().await?;
     Ok(t)
 }
