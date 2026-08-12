@@ -3,6 +3,11 @@ name = "form-a"
 version = "0.1.0"
 edition = "2024"
 
+[profile.release]
+codegen-units = 1
+opt-level = 'z' # wasm less size.
+
+
 [dependencies]
 console_error_panic_hook = "0.1.7"
 gloo-net = "0.7.0"

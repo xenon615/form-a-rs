@@ -19,7 +19,7 @@
         "fields" : [
             {
                 "type":"repeater",
-                "label":"Tasks",
+                "label":"Tasks (repeater)",
                 "name": "tasks",
                 "fields": [
                     {
