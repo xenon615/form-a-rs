@@ -1,0 +1,216 @@
+{
+    "def" : {
+        "title": "Form1",
+        "remoteSubmit" : true,
+        "buttons" : [
+            {
+                "text" : "Save",
+                "classes" : ["button", "button-primary","button-large"],
+                "type" : "submit",
+                "action": "submit"
+            },
+            {
+                "text" : "Cancel",
+                "classes" : ["button", "button-primary","button-large"],
+                "type" : "button"
+            }
+
+        ],
+        "fields" : [
+            {
+                "type" : "text",
+                "name" : "first_name",
+                "label" : "First Name",
+                "classes": ["col-6"],
+                "default": "Raymond",
+                "cLogic": [
+                    {
+                        "path": "show_first_name",
+                        "value": true,
+                        "compare": "==",
+                        "relation": "or"
+                    }
+                ]
+
+            },
+            {
+                "type" : "text",
+                "name" : "last_name",
+                "label" : "Last Name",
+                "classes": ["col-6"]
+            },
+            {
+                "type" : "email",
+                "name" : "email",
+                "label" : "E-mail",
+                "default": "test@somewhere.com",
+                "classes": ["col-6"],
+                "breakAfter": true
+            },
+
+            {
+                "type" : "radio",
+                "name" : "gender",
+                "label" : "Gender",
+                "classes": ["horizontal", "col-6"],
+                "options": [
+                    {"value":"m", "label": "Male"},
+                    {"value":"f", "label": "Female"}
+                ]
+            },
+            {
+                "type" : "date",
+                "name" : "bdate",
+                "label" : "Date of birth",
+                "classes": ["col-6"]
+            },
+            {
+                "type" : "true-false",
+                "name" : "show_first_name",
+                "label" : "Show First Name?",
+                "classes": ["col-6"],
+                "default": true,
+                "breakAfter": true
+            },
+            {
+                "type" : "checkbox",
+                "name" : "hobbies",
+                "label" : "Hobbies",
+                "classes": ["horizontal", "col-12"],
+                "options": [
+                    {"value":"reading", "label":"Reading"},
+                    {"value":"cooking", "label": "Cooking"},
+                    {"value":"kayaking", "label": "Kayaking"}
+                ]
+            },
+
+            {
+                "type" : "select",
+                "name" : "color",
+                "label" : "Preferred Color",
+                "default": "r",
+                "classes": ["horizontal", "col-6"],
+                "options": [
+                    {"value":"r", "label": "Red"},
+                    {"value":"g", "label": "Green"},
+                    {"value":"b", "label": "Blue"}
+                ]
+            },
+            {
+                "type" : "group",
+                "name" : "address",
+                "label" : "Address",
+                "fields": [
+                    {
+                        "name": "address1",
+                        "type": "text",
+                        "label": "Address1",
+                        "classes":["col-9"]
+                    },
+                    {
+                        "name": "address2",
+                        "type": "text",
+                        "label": "Address2",
+                        "classes":["col-9"]
+                    },
+                    {
+                        "name": "city",
+                        "type": "text",
+                        "label": "City",
+                        "default": "Gothem",
+                        "classes":["col-6"]
+                    },
+                    {
+                        "name": "state",
+                        "type": "select",
+                        "label": "State",
+                        "classes":["col-6"],
+                        "options": [
+                            {"value": "MA", "label": "Massachusetts"},
+                            {"value": "OH", "label": "Ohio"}
+                        ]
+                    },
+                    {
+                        "name": "country",
+                        "type": "select",
+                        "label": "Country",
+                        "classes":["col-6"],
+                        "options": [
+                            {"value": "USA", "label": "USA"},
+                            {"value": "GB", "label": "Great Britain"}
+                        ]
+                    },
+
+                    {
+                        "type": "group",
+                        "name": "notes",
+                        "label": "Notes",
+                        "fields": [
+                            {
+                                "name": "knocks",
+                                "type": "number",
+                                "label": "number of knocks",
+                                "classes":["col-9"],
+                                "default": 3
+                            },
+                            {
+                                "name": "when",
+                                "type": "radio",
+                                "label": "When",
+                                "classes":["col-9", "horizontal"],
+                                "default": "m",
+                                "options": [
+                                    {"value": "m", "label": "Morning"},
+                                    {"value": "e", "label": "Evening"}
+                                ]
+
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type" : "textarea",
+                "name" : "info",
+                "label" : "Info",
+                "rows": 10
+            },
+
+            {
+                "type":"repeater",
+                "label":"Tasks",
+                "name": "tasks",
+                "breakAfter": true,
+                "fields": [
+                    {
+                        "type": "text",
+                        "name": "task_name",
+                        "label": "Task name",
+                        "default":"NoNo",
+                        "classes":["col-9"]
+                    },
+                    {
+                        "type": "radio",
+                        "name": "priority",
+                        "label": "Priority",
+                        "default":"m",
+                        "classes":["col-9", "horizontal"],
+                        "options": [
+                            {"value":"h", "label": "High"},
+                            {"value":"m", "label": "Medium"},
+                            {"value":"l", "label": "Lazy"}
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "data" : {
+        "first_name": "Ugon",
+        "last_name": "Harleev",
+        "gender": "m",
+        "tasks": [
+            {}
+        ]
+    }
+}
