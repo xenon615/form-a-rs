@@ -1,5 +1,3 @@
-use std::path;
-
 use leptos::prelude::*;
 use wasm_bindgen::JsCast;
 use gloo_net::http::Request;
@@ -39,9 +37,12 @@ async fn get_form(path: String) -> Result<FormA, Error> {
 #[component]
 fn App() -> impl  IntoView {
     let (form_index, set_form_index) = signal(0);
-    let form_lr = LocalResource::new(move | | get_form(format!("/forms/form-{}.json",form_index.get())));
+    let form_lr = LocalResource::new(move | | get_form(format!("forms/form-{}.json",form_index.get())));
     view!{
-        <FormSelector form_index = set_form_index />
+        <div class="left-pan">
+            <FormSelector form_index = set_form_index />
+            <FormSource form_index/>
+        </div>
         <Suspense fallback = move | | view! {<i>"Loading..."</i>} >
             {
                 move | | Suspend::new( async move {
@@ -62,19 +63,48 @@ fn FormSelector(form_index: WriteSignal<usize>) -> impl IntoView {
     view! {
         <div class="form-selector">
             <div class="field-wrap">
-                <label for ="form_select">Form </label>
                 <select class="field-input"
-                    id="form_select"
                     on:change = move |evt|  form_index.set(event_target_value(&evt).parse::<usize>().unwrap())
                 >
                     {
-                        (0..5).into_iter().map(|i| view! {
+                        (0..3).into_iter().map(|i| view! {
                             <option value={i}>{format!("Form - {}", i)}</option>
                         }).collect_view()
                     }
-
                 </select>
             </div>
+        </div>
+    }
+}
+
+// ---
+
+async fn get_form_source(path: String) -> Result<String, Error> {
+    let t = Request::get(path.as_str())
+        .send().await?.text().await?;
+    Ok(t)
+}
+
+// ---
+
+#[component]
+fn FormSource (form_index: ReadSignal<usize>) -> impl IntoView {
+    let form_lr = LocalResource::new(move | | get_form_source(format!("forms/form-{}.json",form_index.get())));
+    view! {
+
+        <div class="form-source">
+            <pre>
+                <Suspense fallback = move | | view! {<i>"Loading..."</i>} >
+                    {
+                        move | | Suspend::new( async move {
+                            match form_lr.await {
+                                Ok(text) => view! {  {text}   }.into_any(),
+                                Err(e) => view! {<span>{format!("{:?}", e)}</span>}.into_any()
+                            }
+                        })
+                    }
+                </Suspense>
+            </pre>
         </div>
     }
 }

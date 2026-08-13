@@ -235,28 +235,28 @@ fn Field(field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
 
         {
             match &field.specific {
-                SpecificFields::Text => view! {<text::Field _field = field.clone() subtype="text" path data />}.into_any(),
-                SpecificFields::Email => view! {<text::Field _field = field.clone() subtype="email" path data />}.into_any(),
-                SpecificFields::Date => view! {<text::Field _field = field.clone() subtype="date" path data />}.into_any(),
-                SpecificFields::Number => view! {<number::Field _field = field.clone() path data />}.into_any(),
+                SpecificFields::Text => view! {<text::Field subtype="text" path data />}.into_any(),
+                SpecificFields::Email => view! {<text::Field subtype="email" path data />}.into_any(),
+                SpecificFields::Date => view! {<text::Field subtype="date" path data />}.into_any(),
+                SpecificFields::Number => view! {<number::Field  path data />}.into_any(),
 
-                SpecificFields::Select(c) => view! {<select::Field _field=field.clone() specific=c.clone() path data/>}.into_any(),
-                SpecificFields::Radio(c) => view! {<radio::Field _field=field.clone() specific=c.clone() path data/>}.into_any(),
-                SpecificFields::Textarea(t) => view! {<textarea::Field _field=field.clone() specific=t.clone() path  data/>}.into_any(),
-                SpecificFields::TrueFalse => view! {<true_false::Field _field=field.clone() path  data/>}.into_any(),
+                SpecificFields::Select(c) => view! {<select::Field specific=c.clone() path data/>}.into_any(),
+                SpecificFields::Radio(c) => view! {<radio::Field  specific=c.clone() path data/>}.into_any(),
+                SpecificFields::Textarea(t) => view! {<textarea::Field  specific=t.clone() path  data/>}.into_any(),
+                SpecificFields::TrueFalse => view! {<true_false::Field  path  data/>}.into_any(),
 
-                SpecificFields::CheckBox(c) => view! { <checkbox::Field _field=field.clone() specific=c.clone() path  data/>}.into_any(),
+                SpecificFields::CheckBox(c) => view! { <checkbox::Field specific=c.clone() path  data/>}.into_any(),
 
                 SpecificFields::Group(g) => {
                     set_classes.update(|c|  c.push_str("group"));
                     view! {
-                        <group::Field _field=field.clone() specific=g.clone() path data/>
+                        <group::Field  specific=g.clone() path data/>
                     }.into_any()
                 },
 
                 SpecificFields::Repeater(r) => {
                     set_classes.update(|c|  c.push_str("repeater") );
-                    view! {<repeater::Field _field=field.clone() specific=r.clone() path data/>}.into_any()
+                    view! {<repeater::Field  specific=r.clone() path data/>}.into_any()
                 },
                 _ => view! {
                     <div>Not implemented yet</div>

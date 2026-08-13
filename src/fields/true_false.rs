@@ -1,10 +1,9 @@
-use super::FieldA;
 use leptos::prelude::*;
 use crate::data::update;
 use serde_json::Value;
 
 #[component]
-pub fn Field(_field: FieldA, path: String, data: Memo<Value>) -> impl IntoView {
+pub fn Field(path: String, data: Memo<Value>) -> impl IntoView {
     let id = format!("_{}",path);
 
     let toggle = move | ev | {

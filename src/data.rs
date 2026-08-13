@@ -4,37 +4,8 @@ use crate::{
     fields::get_field
 };
 
-// pub fn update_data(path_str: String, value: Value) {
-//     console_log(&format!("{}  {:?}", path_str, value));
-//     let w = use_context::<WriteSignal<Value>>().unwrap();
-//     let path = path_str.split("--").collect::<Vec<_>>();
-//     w.update(| p |  {
-//         let mut f = p;
-//         for (idx, key) in path.iter().enumerate() {
-//             // console_log(&key);
-//             if f.is_object() {
-//                 f = f.as_object_mut().unwrap().entry(*key).or_insert(
-//                     if idx == 0 {Value::Null} else {
-//                         get_field(&path[0 .. idx + 1]).empty_value()
-//                     }
-//                 );
-//             } else if f.is_array() {
-//                 let t = f.as_array().unwrap();
-//                 let i = key.parse::<usize>().unwrap();
-
-//                 f = if t.get(i).is_none()  {
-//                     f.as_array_mut().unwrap().push_mut(json!({}))
-//                 } else {
-//                     f.as_array_mut().unwrap().get_mut(i).unwrap()
-//                 };
-//             }
-//         }
-//         *f = value
-//     })
-// }
-
 pub fn update(path_str: String, value: Value) {
-    console_log(&format!("{}  {:?}", path_str, value));
+    // console_log(&format!("{}  {:?}", path_str, value));
     let w = use_context::<WriteSignal<Value>>().unwrap();
     let path = path_str.split("--").collect::<Vec<_>>();
     w.update(| p |  {
@@ -43,14 +14,7 @@ pub fn update(path_str: String, value: Value) {
             // console_log(&key);
             if f.is_object() {
                 f = f.as_object_mut().unwrap().entry(*key).or_insert(
-                    // if idx == 0 {Value::Null} else {
-                    //     get_field(&path[0 .. idx + 1]).empty_value()
-                    // }
-
-                        get_field(&path[0 .. idx + 1]).empty_value()
-
-
-
+                    get_field(&path[0 .. idx + 1]).empty_value()
                 );
             } else if f.is_array() {
                 let t = f.as_array().unwrap();
@@ -87,36 +51,6 @@ pub fn get(path: String) -> Value{
 }
 
 // ---
-
-// pub fn delete_data(path_str: String) {
-//     let path = path_str.split("--").collect::<Vec<_>>();
-//     console_log(&format!("{:?}", path));
-//     let w = use_context::<WriteSignal<Value>>().unwrap();
-//     let path_len = path.len();
-//     w.update (| p |  {
-//         let mut f = p;
-//         for (idx, pe) in path.iter().enumerate() {
-//             f = if f.is_object() {
-//                 if path_len == idx + 1 {
-//                     f.as_object_mut().unwrap().retain(|k, _v| k != pe);
-//                     break;
-//                 }
-//                 f.get_mut(pe).unwrap()
-//             } else {
-//                 // let i = pe.parse::<usize>().unwrap();
-//                 if path_len == idx + 1 {
-//                     // f.as_array_mut().unwrap().remove(i);
-//                     console_log(&format!("{}  / {:?}", pe, &f));
-//                     f.as_array_mut().unwrap().retain(| e| e["___id"].to_string() != *pe);
-//                     break;
-//                 }
-//                 // f.get_mut(i).unwrap()
-//                 f.get_mut(pe).unwrap()
-//             }
-
-//         }
-//     })
-// }
 
 pub fn delete(path_str: String) {
     let path = path_str.split("--").collect::<Vec<_>>();

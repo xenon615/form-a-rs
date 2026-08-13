@@ -1,10 +1,10 @@
-use super::{ObjectLike, FieldA, Fields};
+use super::{ObjectLike, Fields};
 use leptos::prelude::*;
 use serde_json::{Value, json};
 use crate::data::{delete, update};
 
 #[component]
-pub fn Field(_field: FieldA, specific: ObjectLike, path: String, data: Memo<Value>) -> impl IntoView {
+pub fn Field(specific: ObjectLike, path: String, data: Memo<Value>) -> impl IntoView {
     let each = move || serde_json::from_value::<Vec<Value>>(data.get()).unwrap_or(vec![]);
     let cc = Memo::new(  move |_| each().iter().len());
 

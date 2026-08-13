@@ -1,10 +1,10 @@
-use super::{OptionsLike, FieldA};
+use super::OptionsLike;
 use leptos::prelude::*;
 use crate::data::update;
 use serde_json::Value;
 
 #[component]
-pub fn Field(_field: FieldA, specific: OptionsLike, path: String, data: Memo<Value>) -> impl IntoView {
+pub fn Field(specific: OptionsLike, path: String, data: Memo<Value>) -> impl IntoView {
     let id = format!("_{}",path);
     view! {
             <div class="options">
