@@ -2,16 +2,16 @@
 <html>
     <head>
         
-        <link rel="stylesheet" href="/_normalize.css" integrity="sha384-mATEO3G0fKn2nxjwcLsoA5B6CBzXHXrPelsKJAFdtDXWmqPsOp47BHElwexOLSGK"/>
-        <link rel="stylesheet" href="/style.css" integrity="sha384-LVZ5YO+w7wvYkfWkR8/sheoNfVNxJO9H41m5xnvAI6dNCkvUMFYwF1IMy2G/SCGq"/>
-        <link rel="stylesheet" href="/grid.css" integrity="sha384-Yt3OUcBlp79Ox24VEAkYX4GTsPNY0q0DYCHO1sYG/txtbqgVzv0PQGNY0Xdik1GZ"/>
-    <link rel="modulepreload" href="/form-a.js" crossorigin="anonymous" integrity="sha384-Bt64yqOXH6E8WbpsuwaITe/K8tOvCbu4UgJ4tkbUyalvqWedG4jkMjAPJkfU2XhR"><link rel="preload" href="/form-a_bg.wasm" crossorigin="anonymous" integrity="sha384-On+L2gMfTJwxynCYIcSfMftfbYoAjAzs0t239RvUMhuzQStj+rUfbTV8Rmae9M6s" as="fetch" type="application/wasm"></head>
+        <link rel="stylesheet" href="./_normalize.css" integrity="sha384-mATEO3G0fKn2nxjwcLsoA5B6CBzXHXrPelsKJAFdtDXWmqPsOp47BHElwexOLSGK"/>
+        <link rel="stylesheet" href="./style.css" integrity="sha384-LVZ5YO+w7wvYkfWkR8/sheoNfVNxJO9H41m5xnvAI6dNCkvUMFYwF1IMy2G/SCGq"/>
+        <link rel="stylesheet" href="./grid.css" integrity="sha384-Yt3OUcBlp79Ox24VEAkYX4GTsPNY0q0DYCHO1sYG/txtbqgVzv0PQGNY0Xdik1GZ"/>
+    <link rel="modulepreload" href="./form-a.js" crossorigin="anonymous" integrity="sha384-Bt64yqOXH6E8WbpsuwaITe/K8tOvCbu4UgJ4tkbUyalvqWedG4jkMjAPJkfU2XhR"><link rel="preload" href="./form-a_bg.wasm" crossorigin="anonymous" integrity="sha384-On+L2gMfTJwxynCYIcSfMftfbYoAjAzs0t239RvUMhuzQStj+rUfbTV8Rmae9M6s" as="fetch" type="application/wasm"></head>
     <body>
         <div id="app"></div>
     
 <script type="module">
-import init, * as bindings from '/form-a.js';
-const wasm = await init({ module_or_path: '/form-a_bg.wasm' });
+import init, * as bindings from './form-a.js';
+const wasm = await init({ module_or_path: './form-a_bg.wasm' });
 
 
 window.wasmBindings = bindings;
