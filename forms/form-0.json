@@ -1,0 +1,43 @@
+{
+
+      "def" : {
+          "title": "Form1",
+          "remoteSubmit" : true,
+          "buttons" : [
+              {
+                  "text" : "Save",
+                  "classes" : ["button", "button-primary","button-large"],
+                  "type" : "submit"
+              }
+          ],
+          "fields" : [
+              {
+                  "type" : "text",
+                  "name" : "first_name",
+                  "label" : {"text": "First Name", "position":"before"},
+                  "classes": ["col-9"],
+                  "default": "Raymond"
+              },
+              {
+                  "type" : "text",
+                  "name" : "last_name",
+                  "label" : "Last Name",
+                  "classes": ["col-9"]
+              },
+
+              {
+                  "name": "where",
+                  "type": "select",
+                  "label": "Where",
+                  "classes": ["col-9"],
+                  "options": [
+                      {"value": "here", "label": "Here"},
+                      {"value": "there", "label": "There"}
+                  ]
+              }
+          ]
+      },
+      "data" : {
+          "last_name": "Harleev"
+      }
+}
