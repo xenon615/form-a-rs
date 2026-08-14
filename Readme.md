@@ -3,7 +3,7 @@
 ### Why  
 An attempt to create a Rust clone of my own form generator  written in Vue.
 (At least in educational purposes)
-Therefore, for more detailed info (possibilities, JSON from which the form is created and other ) please refer (there)[https://github.com/xenon615/form-a-js]  
+Therefore, for more detailed info (possibilities, JSON from which the form is created and other ) please refer [there](https://github.com/xenon615/form-a-js)  
 ### Usefulness  
 I gained some benefit while writing this (in terms of gaining new knowledge). Perhaps someone else will benefit if my solution inspires some ideas or answers some questions.
 As for practical application... It's too early to talk about that.
@@ -29,5 +29,5 @@ and watch what happens  :)
 ### Disclaimer
 This code is by no means perfect, but you can use it in whole or in part, or be inspired by it, or... do whatever you want :))
 
-### Important Note  
+### Note  
 No AI was involved in writing this code. We have to play fair. At least while we're learning.
