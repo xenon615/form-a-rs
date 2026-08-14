@@ -84,6 +84,7 @@ fn submit(action:&str) {
 fn Pretty (data: ReadSignal<Value>) -> impl IntoView {
     view! {
         <div class = "pretty">
+            <h3>Form Data</h3>
             <pre>
                 { move || data.with(| d |  serde_json::to_string_pretty(d).unwrap_or_default()) }
             </pre>

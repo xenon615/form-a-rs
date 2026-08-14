@@ -67,7 +67,7 @@ fn FormSelector(form_index: WriteSignal<usize>) -> impl IntoView {
                     on:change = move |evt|  form_index.set(event_target_value(&evt).parse::<usize>().unwrap())
                 >
                     {
-                        (0..3).into_iter().map(|i| view! {
+                        (0..= 2).into_iter().map(|i| view! {
                             <option value={i}>{format!("Form - {}", i)}</option>
                         }).collect_view()
                     }
@@ -93,6 +93,9 @@ fn FormSource (form_index: ReadSignal<usize>) -> impl IntoView {
     view! {
 
         <div class="form-source">
+            <h3>
+                Form JSON
+            </h3>
             <pre>
                 <Suspense fallback = move | | view! {<i>"Loading..."</i>} >
                     {

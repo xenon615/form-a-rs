@@ -1,4 +1,7 @@
-use leptos::prelude::*;
+use leptos::{
+    // leptos_dom::logging::console_log,
+    prelude::*
+};
 use crate::data::*;
 use serde::Deserialize;
 use serde_json::{Value, json};
@@ -114,7 +117,9 @@ pub enum Compare {
     #[serde(rename = ">")]
     More,
     #[serde(rename = "<")]
-    Less
+    Less,
+    #[serde(rename = "in")]
+    In
 }
 
 #[derive(Deserialize, Debug, Clone)]
@@ -301,15 +306,27 @@ pub fn is_show(field: &FieldA) -> bool {
     let mut result = false;
     for l in &field.c_logic {
         let test = get(l.path.clone());
+        // console_log(&format!("{} {}", &field.name,test.as_str().unwrap_or_default()));
+
         let l0 = match l.compare {
             Compare::Eq => l.value == test,
             Compare::MotEq => l.value != test,
+            Compare::In =>  test.as_array().unwrap_or(&vec![]).contains(&l.value),
             _ => true
         };
+
         result = match l.relation {
-            Relation::And => l0 && result,
-            Relation::Or => l0 || result
-        }
+            Relation::And => {
+                // console_log(&format!("{} && {}", l0, result));
+                l0 && result
+            },
+            Relation::Or => {
+                // console_log(&format!("{} || {}", l0, result));
+                l0 || result
+            }
+        };
+        // console_log(&format!("{}", result));
+        // console_log("-------------------");
     }
     result
 }
