@@ -8,7 +8,7 @@ Therefore, for more detailed info (possibilities, JSON from which the form is cr
 I gained some benefit while writing this (in terms of gaining new knowledge). Perhaps someone else will benefit if my solution inspires some ideas or answers some questions.
 As for practical application... It's too early to talk about that.
 ### Demo  
-(here it is)[https://xenon615.github.io/form-a-rs/]
+[here it is](https://xenon615.github.io/form-a-rs/)
 ### What do you need to run this project locally?
 Naturally, download this project and unzip it somewhere.
 I assume that you already have Rust installed on your box.
