@@ -168,7 +168,7 @@
                             {
                                 "name": "where",
                                 "type": "radio",
-                                "label": "When",
+                                "label": "Where",
                                 "classes":["col-4" ],
                                 "default": "roof",
                                 "options": [
@@ -187,7 +187,6 @@
                 "label" : "Info",
                 "rows": 10
             },
-
             {
                 "type":"repeater",
                 "label":"Tasks",

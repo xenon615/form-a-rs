@@ -17,10 +17,39 @@
 
         ],
         "fields" : [
+
+            {
+                "type" : "checkbox",
+                "name" : "hobbies",
+                "label" : "Hobbies",
+                "classes": ["horizontal", "col-12"],
+                "options": [
+                    {"value":"reading", "label":"Reading"},
+                    {"value":"cooking", "label": "Cooking"},
+                    {"value":"kayaking", "label": "Kayaking"},
+                    {"value":"other", "label": "Other"}
+                ],
+                "breakAfter": true
+            },
+            {
+                "type": "text",
+                "name": "other",
+                "label": "other",
+                "classes": ["col-12"],
+                "breakAfter": true,
+                "cLogic": [
+                    {
+                        "path": "hobbies",
+                        "value": "other",
+                        "compare": "in",
+                        "relation": "or"
+                    }
+                ]
+            },
             {
                 "type": "text",
                 "name": "text1",
-                "label": "Text1 (show me when 'When' is 'noon')",
+                "label": "Text1 (show me when 'When' is 'noon'  and 'Where' is 'inside')",
                 "classes": ["col-12"],
                 "breakAfter": true,
                 "cLogic": [
@@ -29,7 +58,14 @@
                         "value": "noon",
                         "compare": "==",
                         "relation": "or"
+                    },
+                    {
+                        "path": "group0--group1--where",
+                        "value": "inside",
+                        "compare": "==",
+                        "relation": "and"
                     }
+
                 ]
             },
             {
@@ -72,6 +108,18 @@
                                     {"value":"morning" , "label": "Morning"},
                                     {"value":"noon" , "label": "Noon"},
                                     {"value":"evening" , "label": "Evening"}
+                                ],
+                                "classes": ["col-9"]
+                            },
+
+                            {
+                                "type": "radio",
+                                "name": "where",
+                                "label": "Where",
+                                "default": "inside",
+                                "options" : [
+                                    {"value":"inside" , "label": "Inside"},
+                                    {"value":"outside" , "label": "Outside"}
                                 ],
                                 "classes": ["col-9"]
                             }
