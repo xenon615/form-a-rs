@@ -21,7 +21,7 @@
             {
                 "type" : "checkbox",
                 "name" : "hobbies",
-                "label" : "Hobbies",
+                "label" : "Hobbies ( Click 'Other')",
                 "classes": ["horizontal", "col-12"],
                 "options": [
                     {"value":"reading", "label":"Reading"},
