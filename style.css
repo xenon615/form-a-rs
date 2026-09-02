@@ -3,6 +3,16 @@ body {
     font-size: 14px;
 }
 
+.header {
+    background-color:  #052525;
+    text-align: center;
+    padding: 10px;
+    font-size: 1.5em;
+    color: wheat;
+    & a {
+        color: wheat;
+    }
+}
 #app {
     width: 100%;
     display: flex;
