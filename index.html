@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
     <head>
-        
         <link rel="stylesheet" href="./_normalize.css" integrity="sha384-mATEO3G0fKn2nxjwcLsoA5B6CBzXHXrPelsKJAFdtDXWmqPsOp47BHElwexOLSGK"/>
         <link rel="stylesheet" href="./style.css" integrity="sha384-GTh+agzRydb2wvYIvQ9wjjq5xOQJu9w6jDjTY2NkQEDPf6m45jpQIa+XURWKyvCQ"/>
         <link rel="stylesheet" href="./grid.css" integrity="sha384-Yt3OUcBlp79Ox24VEAkYX4GTsPNY0q0DYCHO1sYG/txtbqgVzv0PQGNY0Xdik1GZ"/>
-    <link rel="modulepreload" href="./form-a.js" crossorigin="anonymous" integrity="sha384-MfozHgMUmXu/iHETQyv9A7Z+CfLkF9KCp+HXFBug5OMAB70C148z9peHrVvGakVg"><link rel="preload" href="./form-a_bg.wasm" crossorigin="anonymous" integrity="sha384-l7jrxklxeVvCIUC7GJI1ShH95JeigtEen+i3W+LEk9y7Em9rLqFS99Kx8rvkcXh+" as="fetch" type="application/wasm"></head>
+        <link rel="modulepreload" href="./form-a.js" crossorigin="anonymous" integrity="sha384-MfozHgMUmXu/iHETQyv9A7Z+CfLkF9KCp+HXFBug5OMAB70C148z9peHrVvGakVg">
+        <link rel="preload" href="./form-a_bg.wasm" crossorigin="anonymous" integrity="sha384-l7jrxklxeVvCIUC7GJI1ShH95JeigtEen+i3W+LEk9y7Em9rLqFS99Kx8rvkcXh+" as="fetch" type="application/wasm">
+    </head>
     <body>
         <div class="header">
-            Demo for repository
-            <a href="https://github.com/xenon615/form-a-rs">form-a-rs</a>
+            Demo for repository <a href="https://github.com/xenon615/form-a-rs">form-a-rs</a>
         </div>
         <div id="app"></div>
-    
+
 <script type="module">
 import init, * as bindings from './form-a.js';
 const wasm = await init({ module_or_path: './form-a_bg.wasm' });
