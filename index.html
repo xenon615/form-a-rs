@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
     <head>
-        
+
         <link rel="stylesheet" href="./_normalize.css" integrity="sha384-mATEO3G0fKn2nxjwcLsoA5B6CBzXHXrPelsKJAFdtDXWmqPsOp47BHElwexOLSGK"/>
         <link rel="stylesheet" href="./style.css" integrity="sha384-+DhKl02FLdplgXIuX1zRC5GyjYfp+s6mHLNQeA9DwoSQWeodIyt3jUm9iBHvf+cv"/>
         <link rel="stylesheet" href="./grid.css" integrity="sha384-Yt3OUcBlp79Ox24VEAkYX4GTsPNY0q0DYCHO1sYG/txtbqgVzv0PQGNY0Xdik1GZ"/>
     <link rel="modulepreload" href="./form-a.js" crossorigin="anonymous" integrity="sha384-o8b69cgAV1WMWFBq7CsBBfT1Ik3xItTFoUNzdl90XrX3h0UEPutBEVEvXKRHVr/t"><link rel="preload" href="./form-a_bg.wasm" crossorigin="anonymous" integrity="sha384-BLtmpZVv/sb2uMu/9mP3QlJM47uxNk7ozgPbi6/JW/0pn0U3aOSngem8Z9xwFEI9" as="fetch" type="application/wasm"></head>
     <body>
+        <a href="https://github.com/xenon615/form-a-rs">Link to repo</a>
         <div id="app"></div>
-    
+
 <script type="module">
 import init, * as bindings from './form-a.js';
 const wasm = await init({ module_or_path: './form-a_bg.wasm' });
